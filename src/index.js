@@ -88,15 +88,26 @@ class Game extends React.Component {
 
     return(
       <div className="game">
+        <h2>The Game of Isolation</h2>
+        <div className="rules">
+          <h3>Rules</h3>
+          <ul>
+            <li>2 players trade turns moving the game piece (ø)</li>
+            <li>The game piece (ø) can be moved like a queen in chess. Horizontally, vertically, diagonally.</li>
+            <li>Moves cannot be to or through previous moves, these will be marked as (#)</li>
+            <li>First move can go anywhere</li>
+            <li>Last player to be able to move wins the game</li>
+          </ul>
+        </div>
+        <div className="game-info">
+          <div>{status}</div>
+        </div>
         <div className="game-board">
           <Board
             squares={squares}
             boardSize={this.props.boardSize}
             onClick={(i) => this.handleClick(i)}
           />
-        </div>
-        <div className="game-info">
-          <div>{status}</div>
         </div>
       </div>
     )
@@ -109,48 +120,29 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
+function getLineRange(pos, rangeStop, step) {
+  return range(pos, rangeStop, step).slice(1);
+}
+
+function filterLineRange(lineRange, squares, extraFilter = () => true) {
+  return takeWhile(lineRange, (i) => squares[i] === null && extraFilter(i));
+}
+
 function calculateLegalMoves(squares, pos, boardSize) {
   const maxBoardSize = boardSize * boardSize;
+  const bs = boardSize;
+  const mbs = maxBoardSize;
+  const eastLimitFun = (i) => i % bs !== 0;
+  const westLimitFun = (i) => i % bs !== bs-1;
 
-  let nw = takeWhile(
-    range(pos, -1, -(boardSize+1)).slice(1),
-    (i) => (squares[i] === null) && (i % boardSize !== (boardSize-1))
-  );
-
-  let n = takeWhile(
-    range(pos, -1, -boardSize).slice(1),
-    (i) => squares[i] === null
-  );
-
-  let ne = takeWhile(
-    range(pos, -1, -(boardSize-1)).slice(1),
-    (i) => (squares[i] === null) && (i % boardSize !== 0)
-  );
-
-  let w = takeWhile(
-    range(pos, -1, -1).slice(1),
-    (i) => squares[i] === null && i % boardSize !== boardSize - 1
-  );
-
-  let e = takeWhile(
-    range(pos, maxBoardSize, 1).slice(1),
-    (i) => squares[i] === null && i % boardSize !== 0
-  );
-
-  let sw = takeWhile(
-    range(pos, maxBoardSize, boardSize-1).slice(1),
-    (i) => (squares[i] === null) && (i % boardSize !== boardSize-1)
-  );
-
-  let s = takeWhile(
-    range(pos, maxBoardSize, boardSize).slice(1),
-    (i) => squares[i] === null
-  );
-
-  let se = takeWhile(
-    range(pos, maxBoardSize, boardSize+1).slice(1),
-    (i) => (squares[i] === null) && (i % boardSize !== 0)
-  );
+  const n  = filterLineRange( getLineRange(pos, -1, -bs),   squares);
+  const ne = filterLineRange( getLineRange(pos, -1, -(bs-1)), squares, eastLimitFun);
+  const e  = filterLineRange( getLineRange(pos, mbs, 1),    squares, eastLimitFun);
+  const se = filterLineRange( getLineRange(pos, mbs, bs+1), squares, eastLimitFun);
+  const s  = filterLineRange( getLineRange(pos, mbs, bs),   squares);
+  const sw = filterLineRange( getLineRange(pos, mbs, bs-1), squares, westLimitFun);
+  const w  = filterLineRange( getLineRange(pos, -1, -1),    squares, westLimitFun);
+  const nw = filterLineRange( getLineRange(pos, -1, -(bs+1)), squares, westLimitFun);
 
   return [n, ne, e, se, s, sw, w, nw];
 }

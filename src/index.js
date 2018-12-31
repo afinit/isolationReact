@@ -2,9 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import {range, takeWhile, flatten, includes} from 'lodash';
-// import range from 'lodash/range';
 
-// const _ = require('lodash/core');
 
 function Square(props) {
   return (
@@ -21,6 +19,7 @@ class Board extends React.Component {
   renderSquare(i) {
     return (
       <Square
+        key={i}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
@@ -33,7 +32,7 @@ class Board extends React.Component {
       <div>
         {
           [...Array(boardSize).keys()].map((i) =>
-            <div className="board-row">
+            <div key={"boardRow" + i} className="board-row">
               {
                 [...Array(boardSize).keys()].map((j) => this.renderSquare(j + i*boardSize))
               }
@@ -57,42 +56,11 @@ class Game extends React.Component {
     }
   }
 
-  // checkMovePath(start, end, mod, squares) {
-  //   console.log("checkMovePath", start, end, mod);
-  //   for (let i=start+mod; i < end; i += mod) {
-  //     if (squares[i]) return false;
-  //   }
-  //   return true;
-  // }
-  //
-  // checkMove(move, squares) {
-  //   const lastMove = this.state.lastMove;
-  //   const boardSize = this.boardSize;
-  //   const [start, end] = (move < lastMove) ? [move, lastMove] : [lastMove, move];
-  //   console.log("checkMove", boardSize, move, lastMove);
-  //
-  //   const startX = start % boardSize;
-  //   const startY = Math.floor(start / boardSize);
-  //   const endX = end % boardSize;
-  //   const endY = Math.floor(end / boardSize);
-  //
-  //   if (startX === endX) {
-  //     return this.checkMovePath(start, end, boardSize, squares);
-  //   } else if (startY === endY) {
-  //     return this.checkMovePath(start, end, 1, squares);
-  //   } else if (Math.abs(endX - startX) === Math.abs(endY - startY)) {
-  //     if (endX < startX) return this.checkMovePath(start, end, boardSize-1, squares);
-  //     else return this.checkMovePath(start, end, boardSize+1, squares);
-  //   } else return false;
-  // }
-
   handleClick(i) {
     const squares = this.state.squares.slice();
     const p1IsNext = this.state.p1IsNext;
     const lastMove = this.state.lastMove;
     const legalMovesFlat = flatten(this.state.legalMoves);
-
-    console.log(legalMovesFlat);
 
     if (!includes(legalMovesFlat, i)) return;
 
@@ -111,7 +79,6 @@ class Game extends React.Component {
 
   render() {
     const squares = this.state.squares;
-    // const winner = calculateWinner(squares);
     let status;
     if (flatten(this.state.legalMoves).length !== 0) {
       status = "Next Move: " + (this.state.p1IsNext ? "P1" : "P2");
@@ -138,7 +105,7 @@ class Game extends React.Component {
 
 
 ReactDOM.render(
-  <Game boardSize={7}/>,
+  <Game boardSize={5}/>,
   document.getElementById('root')
 );
 

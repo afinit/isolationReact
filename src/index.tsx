@@ -1,10 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import './index.css';
 import {range, takeWhile, flatten, includes} from 'lodash';
 
 
-function Square(props) {
+interface SquareProps {
+  value: string;
+  onClick(i: React.MouseEvent): void;
+}
+
+function Square(props: SquareProps) {
   return (
     <button
       className="square"
@@ -15,8 +20,18 @@ function Square(props) {
   );
 }
 
-class Board extends React.Component {
-  renderSquare(i) {
+interface BoardProps {
+  squares: Array<string>;
+  onClick(i: number): void;
+  boardSize: number;
+}
+
+class Board extends React.Component<BoardProps> {
+  constructor(props: BoardProps) {
+    super(props);
+  }
+
+  renderSquare(i: number) {
     return (
       <Square
         key={i}
@@ -31,10 +46,10 @@ class Board extends React.Component {
     return (
       <div>
         {
-          [...Array(boardSize).keys()].map((i) =>
+          [...(Array<string>(boardSize) as any).keys()].map((i) =>
             <div key={"boardRow" + i} className="board-row">
               {
-                [...Array(boardSize).keys()].map((j) => this.renderSquare(j + i*boardSize))
+                [...(Array<string>(boardSize) as any).keys()].map((j) => this.renderSquare(j + i*boardSize))
               }
             </div>
           )
@@ -44,19 +59,33 @@ class Board extends React.Component {
   }
 }
 
-class Game extends React.Component {
-  constructor(props) {
+interface GameProps {
+  boardSize: number;
+}
+
+interface GameState {
+  squares: Array<string>;
+  p1IsNext: boolean;
+  lastMove?: number;
+  legalMoves: Array<number>;
+}
+
+class Game extends React.Component<GameProps> {
+  constructor(props: GameProps) {
     super(props);
     this.boardSize = props.boardSize;
     this.state = {
-      squares: Array(props.boardSize * props.boardSize).fill(null),
+      squares: (Array<string>(this.boardSize * this.boardSize) as any).fill(null),
       p1IsNext: true,
-      lastMove: null,
-      legalMoves: range(0, props.boardSize * props.boardSize),
+      legalMoves: range(0, this.boardSize * this.boardSize),
     }
   }
 
-  handleClick(i) {
+  boardSize: number;
+  
+  state: GameState;
+
+  handleClick(i: number) {
     const squares = this.state.squares.slice();
     const p1IsNext = this.state.p1IsNext;
     const lastMove = this.state.lastMove;
@@ -64,7 +93,7 @@ class Game extends React.Component {
 
     if (!includes(legalMovesFlat, i)) return;
 
-    if (lastMove !== null) {
+    if (lastMove !== undefined) {
       squares[lastMove] = "#";
     }
 
@@ -105,7 +134,7 @@ class Game extends React.Component {
         <div className="game-board">
           <Board
             squares={squares}
-            boardSize={this.props.boardSize}
+            boardSize={this.boardSize}
             onClick={(i) => this.handleClick(i)}
           />
         </div>
@@ -120,20 +149,24 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-function getLineRange(pos, rangeStop, step) {
+function getLineRange(pos: number, rangeStop: number, step: number) {
   return range(pos, rangeStop, step).slice(1);
 }
 
-function filterLineRange(lineRange, squares, extraFilter = () => true) {
+function filterLineRange(
+  lineRange: Array<number>, 
+  squares: Array<string>, 
+  extraFilter = (i: number) => true
+) {
   return takeWhile(lineRange, (i) => squares[i] === null && extraFilter(i));
 }
 
-function calculateLegalMoves(squares, pos, boardSize) {
+function calculateLegalMoves(squares: Array<string>, pos: number, boardSize: number) {
   const maxBoardSize = boardSize * boardSize;
   const bs = boardSize;
   const mbs = maxBoardSize;
-  const eastLimitFun = (i) => i % bs !== 0;
-  const westLimitFun = (i) => i % bs !== bs-1;
+  const eastLimitFun = (i: number) => i % bs !== 0;
+  const westLimitFun = (i: number) => i % bs !== bs-1;
 
   const n  = filterLineRange( getLineRange(pos, -1, -bs),   squares);
   const ne = filterLineRange( getLineRange(pos, -1, -(bs-1)), squares, eastLimitFun);

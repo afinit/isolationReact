@@ -71,6 +71,7 @@ interface GameState {
 }
 
 class Game extends React.Component<GameProps> {
+
   constructor(props: GameProps) {
     super(props);
     this.boardSize = props.boardSize;
@@ -80,6 +81,9 @@ class Game extends React.Component<GameProps> {
       legalMoves: range(0, this.boardSize * this.boardSize),
     }
   }
+
+  squarePixels = 34;
+  minGameWidth = 320;
 
   boardSize: number;
   
@@ -115,8 +119,10 @@ class Game extends React.Component<GameProps> {
       status = "Winner: " + (this.state.p1IsNext ? "P2" : "P1");
     };
 
+    const gameWidth = this.squarePixels * this.boardSize + 20;
+
     return(
-      <div className="game">
+      <div className="game" style={{width: gameWidth > this.minGameWidth ? gameWidth : this.minGameWidth + "px"}}>
         <h2>The Game of Isolation</h2>
         <div className="rules">
           <h3>Rules</h3>
@@ -143,9 +149,8 @@ class Game extends React.Component<GameProps> {
   }
 }
 
-
 ReactDOM.render(
-  <Game boardSize={5}/>,
+  <Game boardSize={5} />,
   document.getElementById('root')
 );
 

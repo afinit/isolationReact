@@ -16,6 +16,9 @@ interface GameState {
   legalMoves: Array<number>;
 }
 
+const PASTMOVECHAR = "#";
+const CURRENTPOSCHAR = "ø";
+
 class Game extends React.Component<GameProps> {
 
   constructor(props: GameProps) {
@@ -35,30 +38,59 @@ class Game extends React.Component<GameProps> {
   
   state: GameState;
 
-  handleClick(i: number) {
+  runAi() {
     const squares = this.state.squares.slice();
     const p1IsNext = this.state.p1IsNext;
     const lastMove = this.state.lastMove;
-    const legalMovesFlat = flatten(this.state.legalMoves);
+    const legalMovesFlat = this.state.legalMoves.flat();
 
-    if (!includes(legalMovesFlat, i)) return;
+    if (legalMovesFlat.length > 0) {
+      if (lastMove !== undefined) {
+        squares[lastMove] = PASTMOVECHAR;
+      }
 
-    if (lastMove !== undefined) {
-      squares[lastMove] = "#";
+      const startTime = new Date().getTime();
+      const aiMove = minimax(squares, legalMovesFlat, this.boardSize, true, new Date().getTime() + 1000, 5, openMovesHeuristic);
+      console.log("minimax: ", legalMovesFlat, aiMove);
+      console.log("runtime: ", new Date().getTime() - startTime);
+        
+      squares[aiMove.pos] = CURRENTPOSCHAR;
+
+      this.setState({
+          squares: squares,
+          p1IsNext: !p1IsNext,
+          lastMove: aiMove.pos,
+          legalMoves: calculateLegalMoves(squares, aiMove.pos, this.boardSize),
+      })
     }
+  }
 
+  handleClick(i: number) {
+    if (this.state.p1IsNext) {
+      const squares = this.state.squares.slice();
+      const p1IsNext = this.state.p1IsNext;
+      const lastMove = this.state.lastMove;
+      const legalMovesFlat = this.state.legalMoves.flat();
 
-    squares[i] = "ø";
+      if (!includes(legalMovesFlat, i)) return;
 
-    const startTime = new Date().getTime();
-    console.log("minimax: ", i, minimax(squares, i, this.boardSize, true, new Date().getTime() + 1000, 5, openMovesHeuristic));
-    console.log("runtime: ", new Date().getTime() - startTime);
-    this.setState({
-      squares: squares,
-      p1IsNext: !p1IsNext,
-      lastMove: i,
-      legalMoves: calculateLegalMoves(squares, i, this.boardSize),
-    })
+      if (lastMove !== undefined) {
+        squares[lastMove] = PASTMOVECHAR;
+      }
+
+      squares[i] = CURRENTPOSCHAR;
+
+      this.setState({
+        squares: squares,
+        p1IsNext: !p1IsNext,
+        lastMove: i,
+        legalMoves: calculateLegalMoves(squares, i, this.boardSize),
+      })
+    }
+  }
+
+  componentDidUpdate() {
+    if ( ! this.state.p1IsNext ) this.runAi();
   }
 
   render() {

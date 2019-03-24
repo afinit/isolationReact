@@ -73,20 +73,16 @@ function argMax(arr: Array<number>) {
 //   maxPlayer is the one moving, so current state would be bad for maxPlayer if there are no moves
 export function minimax(
   squares: Array<string>, 
-  pos: number, 
+  legalMoves: Array<number>, 
   boardSize: number, 
   maxPlayer: boolean, 
   endTime: number, 
   depth: number,
   heuristic: (squares: Array<string>, pos: number, boardSize: number, maxPlayer: boolean) => Score
 ): Score {
-  // copy squares array
-  // loop over legal moves
-    // recurse minimax
-  const legalMoves = calculateLegalMoves(squares, pos, boardSize).flat();
   if (legalMoves.length === 0) {
     // if there are no moves, this is bad for maxPlayer
-    return {score: maxPlayer ? -(WINNING + depth) : WINNING + depth, pos};
+    return {score: maxPlayer ? -(WINNING + depth) : WINNING + depth, pos: -1};
   }
 
   const moveScores: Array<{score: number, pos: number}> = legalMoves.map( (move: number) => {
@@ -97,7 +93,7 @@ export function minimax(
     else {
       const squaresCopy = squares.slice();
       squaresCopy[move] = "t";
-      return {score: minimax(squaresCopy, move, boardSize, !maxPlayer, endTime, depth - 1, heuristic).score, pos: move}
+      return {score: minimax(squaresCopy, calculateLegalMoves(squaresCopy, move, boardSize).flat(), boardSize, !maxPlayer, endTime, depth - 1, heuristic).score, pos: move}
     }
   })
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import {range, flatten, includes} from 'lodash';
 
 import Board from '../Board/Board';
-import { calculateLegalMoves } from '../../common/util';
+import { calculateLegalMoves, openMovesHeuristic, minimax } from '../../common/util';
 
 
 interface GameProps {
@@ -47,7 +47,12 @@ class Game extends React.Component<GameProps> {
       squares[lastMove] = "#";
     }
 
+
     squares[i] = "ø";
+
+    const startTime = new Date().getTime();
+    console.log("minimax: ", i, minimax(squares, i, this.boardSize, true, new Date().getTime() + 1000, 5, openMovesHeuristic));
+    console.log("runtime: ", new Date().getTime() - startTime);
     this.setState({
       squares: squares,
       p1IsNext: !p1IsNext,

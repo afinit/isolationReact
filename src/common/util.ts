@@ -1,5 +1,12 @@
 import {range, takeWhile} from 'lodash';
+import { number } from 'prop-types';
 
+const WINNING = 1000;
+
+interface Score {
+  score: number;
+  pos: number;
+}
 
 function getLineRange(pos: number, rangeStop: number, step: number) {
   return range(pos, rangeStop, step).slice(1);
@@ -13,7 +20,7 @@ function filterLineRange(
   return takeWhile(lineRange, (i) => squares[i] === null && extraFilter(i));
 }
 
-export function calculateLegalMoves(squares: Array<string>, pos: number, boardSize: number) {
+function calculateQueenMoves(squares: Array<string>, pos: number, boardSize: number) {
   const maxBoardSize = boardSize * boardSize;
   const bs = boardSize;
   const mbs = maxBoardSize;
@@ -32,6 +39,8 @@ export function calculateLegalMoves(squares: Array<string>, pos: number, boardSi
   return [n, ne, e, se, s, sw, w, nw];
 }
 
+export const calculateLegalMoves = calculateQueenMoves;
+
 function isLegal(squares: Array<string>, pos: number, row: number, boardSize: number) {
   // check row of new pos with mod boardSize
   // check if pos is outside of legal pos
@@ -48,6 +57,55 @@ function addMove(squares: Array<string>, currPos: number, move: number, boardSiz
     queue.unshift(newPos);
     flood.unshift(newPos);
   }
+}
+
+export function openMovesHeuristic(squares: Array<string>, pos: number, boardSize: number, maxPlayer: boolean) {
+  const moves = calculateLegalMoves(squares, pos, boardSize).flat().length;
+  return maxPlayer ? {score: moves, pos} : {score: -moves, pos};
+}
+
+// https://gist.github.com/engelen/fbce4476c9e68c52ff7e5c2da5c24a28
+function argMax(arr: Array<number>) {
+  return arr.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
+}
+
+// calculate minimax decision for the current state of the board from viewpoint of maxPlayer
+//   maxPlayer is the one moving, so current state would be bad for maxPlayer if there are no moves
+export function minimax(
+  squares: Array<string>, 
+  pos: number, 
+  boardSize: number, 
+  maxPlayer: boolean, 
+  endTime: number, 
+  depth: number,
+  heuristic: (squares: Array<string>, pos: number, boardSize: number, maxPlayer: boolean) => Score
+): Score {
+  // copy squares array
+  // loop over legal moves
+    // recurse minimax
+  const legalMoves = calculateLegalMoves(squares, pos, boardSize).flat();
+  if (legalMoves.length === 0) {
+    // if there are no moves, this is bad for maxPlayer
+    return {score: maxPlayer ? -(WINNING + depth) : WINNING + depth, pos};
+  }
+
+  const moveScores: Array<{score: number, pos: number}> = legalMoves.map( (move: number) => {
+    // collect heuristics if we are at depth limit or time is up.. don't actually need to "move" the piece here for the open moves heuristic because we just want legal moves from the proposed position
+    if ( depth === 0 || endTime < new Date().getTime()) {
+      return heuristic(squares, move, boardSize, !maxPlayer);
+    }
+    else {
+      const squaresCopy = squares.slice();
+      squaresCopy[move] = "t";
+      return {score: minimax(squaresCopy, move, boardSize, !maxPlayer, endTime, depth - 1, heuristic).score, pos: move}
+    }
+  })
+
+  const scores = moveScores.map(o => o.score);
+  // maxPlayer wants to maximize the outcome of the decision
+  const bestScore = maxPlayer ? Math.max(...scores) : Math.min(...scores);
+
+  return moveScores[scores.indexOf(bestScore)];
 }
 
 export function floodfill(squares: Array<string>, pos: number, boardSize: number) {

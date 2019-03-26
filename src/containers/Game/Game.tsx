@@ -11,6 +11,8 @@ interface GameProps {
 
 interface GameState {
   squares: Array<string>;
+  p1Name: string;
+  p2Name: string;
   p1IsNext: boolean;
   lastMove?: number;
   legalMoves: Array<number>;
@@ -26,7 +28,9 @@ class Game extends React.Component<GameProps> {
     this.boardSize = props.boardSize;
     this.state = {
       squares: (Array<string>(this.boardSize * this.boardSize) as any).fill(null),
-      p1IsNext: true,
+      p1Name: "You",
+      p2Name: "AI",
+      p1IsNext: Math.random() < 0.5,
       legalMoves: range(0, this.boardSize * this.boardSize),
     }
   }
@@ -89,6 +93,10 @@ class Game extends React.Component<GameProps> {
     }
   }
 
+  componentDidMount() {
+    if ( ! this.state.p1IsNext ) this.runAi();
+  }
+
   componentDidUpdate() {
     if ( ! this.state.p1IsNext ) this.runAi();
   }
@@ -97,9 +105,9 @@ class Game extends React.Component<GameProps> {
     const squares = this.state.squares;
     let status;
     if (flatten(this.state.legalMoves).length !== 0) {
-      status = "Next Move: " + (this.state.p1IsNext ? "P1" : "P2");
+      status = "Next Move: " + (this.state.p1IsNext ? this.state.p1Name : this.state.p2Name);
     } else {
-      status = "Winner: " + (this.state.p1IsNext ? "P2" : "P1");
+      status = "Winner: " + (this.state.p1IsNext ? this.state.p2Name : this.state.p1Name);
     };
 
     const gameWidth = this.squarePixels * this.boardSize + 20;

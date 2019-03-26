@@ -1,5 +1,4 @@
 import {range, takeWhile} from 'lodash';
-import { number } from 'prop-types';
 
 const WINNING = 1000;
 

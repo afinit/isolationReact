@@ -5,6 +5,6 @@ import Game from './containers/Game/Game';
 
 
 ReactDOM.render(
-  <Game boardSize={5} />,
+  <Game boardSize={7} />,
   document.getElementById('root')
 );

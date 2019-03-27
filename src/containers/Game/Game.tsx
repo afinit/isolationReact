@@ -4,7 +4,7 @@ import {range, flatten, includes} from 'lodash';
 import Board from '../Board/Board';
 import { calculateLegalMoves, openMovesHeuristic, minimax } from '../../common/util';
 
-const MINIMAX_DEPTH = 3;
+const MINIMAX_DEPTH = 5;
 
 interface GameProps {
   boardSize: number;
@@ -95,11 +95,11 @@ class Game extends React.Component<GameProps> {
   }
 
   componentDidMount() {
-    if ( ! this.state.p1IsNext ) this.runAi();
+    if ( ! this.state.p1IsNext ) new Promise(() => setTimeout(() => this.runAi(),1));
   }
 
   componentDidUpdate() {
-    if ( ! this.state.p1IsNext ) this.runAi();
+    if ( ! this.state.p1IsNext ) new Promise(() => setTimeout(() => this.runAi(),10));
   }
 
   render() {

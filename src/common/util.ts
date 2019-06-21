@@ -35,7 +35,7 @@ function calculateQueenMoves(squares: Array<string>, pos: number, boardSize: num
   const w  = filterLineRange( getLineRange(pos, -1, -1),    squares, westLimitFun);
   const nw = filterLineRange( getLineRange(pos, -1, -(bs+1)), squares, westLimitFun);
 
-  return [n, ne, e, se, s, sw, w, nw];
+  return [n, ne, e, se, s, sw, w, nw].flat();
 }
 
 export const calculateLegalMoves = calculateQueenMoves;
@@ -61,11 +61,6 @@ function addMove(squares: Array<string>, currPos: number, move: number, boardSiz
 export function openMovesHeuristic(squares: Array<string>, pos: number, boardSize: number, maxPlayer: boolean) {
   const moves = calculateLegalMoves(squares, pos, boardSize).flat().length;
   return maxPlayer ? {score: moves, pos} : {score: -moves, pos};
-}
-
-// https://gist.github.com/engelen/fbce4476c9e68c52ff7e5c2da5c24a28
-function argMax(arr: Array<number>) {
-  return arr.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
 }
 
 // calculate minimax decision for the current state of the board from viewpoint of maxPlayer

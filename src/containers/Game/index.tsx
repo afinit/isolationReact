@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {range, flatten, includes} from 'lodash';
+import {range, includes} from 'lodash';
 
-import Board from '../Board/Board';
+import Board from '../Board';
 import { calculateLegalMoves, openMovesHeuristic, minimax } from '../../common/util';
 
 
@@ -54,7 +54,7 @@ const Game = function(props: GameProps) {
       setSquares(squaresCopy);
       setP1IsNext(!p1IsNext);
       setLastMove(aiMove.pos);
-      setLegalMoves(calculateLegalMoves(squaresCopy, aiMove.pos, boardSize).flat());
+      setLegalMoves(calculateLegalMoves(squaresCopy, aiMove.pos, boardSize));
     }
   }
 
@@ -74,12 +74,12 @@ const Game = function(props: GameProps) {
       setSquares(squaresCopy);
       setP1IsNext(!p1IsNext);
       setLastMove(i);
-      setLegalMoves(calculateLegalMoves(squares, i, boardSize).flat());
+      setLegalMoves(calculateLegalMoves(squares, i, boardSize));
     }
   }
 
   let status;
-  if (flatten(legalMoves).length !== 0) {
+  if (legalMoves.flat().length !== 0) {
     status = "Next Move: " + (p1IsNext ? p1Name : p2Name);
   } else {
     status = "Winner: " + (p1IsNext ? p2Name : p1Name);

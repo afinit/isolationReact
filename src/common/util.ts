@@ -44,7 +44,7 @@ function isLegal(squares: Array<string>, pos: number, row: number, boardSize: nu
   // check row of new pos with mod boardSize
   // check if pos is outside of legal pos
   // return and of both
-  return pos >= 0 && pos < boardSize * boardSize && squares[pos] === null && Math.floor(pos / boardSize) == row;
+  return pos >= 0 && pos < boardSize * boardSize && squares[pos] === null && Math.floor(pos / boardSize) === row;
 }
 
 function addMove(squares: Array<string>, currPos: number, move: number, boardSize: number, queue: Array<number>, flood: Array<number>) {

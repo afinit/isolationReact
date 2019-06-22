@@ -5,6 +5,8 @@ import Board from '../Board';
 import { calculateLegalMoves, openMovesHeuristic, minimax } from '../../common/util';
 import { Link } from 'react-router-dom';
 
+import './index.css';
+
 
 interface GameProps {
   boardSize: number;

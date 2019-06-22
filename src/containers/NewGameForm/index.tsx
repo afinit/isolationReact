@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import './index.css';
+
 export interface Props {
   p1Name: string;
   p2Name: string;
@@ -13,7 +15,7 @@ export interface Props {
 export default function NewGameForm(props: Props) {
 
   return (
-    <>
+    <div className="new-game-form">
       <label>
         Player1 Name: {" "}
         <input
@@ -53,6 +55,6 @@ export default function NewGameForm(props: Props) {
           Start Game
         </Link>
       </button>
-    </>
+    </div >
   );
 }

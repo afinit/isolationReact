@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './index.css';
-import Game from './containers/Game';
+import App from './App';
 
 
 ReactDOM.render(
-  <Game boardSize={7} />,
+  <App />,
   document.getElementById('root')
 );

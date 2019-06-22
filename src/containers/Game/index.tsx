@@ -3,6 +3,7 @@ import {range, includes} from 'lodash';
 
 import Board from '../Board';
 import { calculateLegalMoves, openMovesHeuristic, minimax } from '../../common/util';
+import { Link } from 'react-router-dom';
 
 
 interface GameProps {
@@ -110,6 +111,11 @@ const Game = function(props: GameProps) {
           onClick={(i) => handleClick(i)}
         />
       </div>
+      <button>
+        <Link to={{pathname: "/"}}>
+          New Game
+        </Link>
+      </button>
     </div>
   )
 }

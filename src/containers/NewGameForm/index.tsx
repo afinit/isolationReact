@@ -1,14 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import PlayerConfigForm, { PlayerConfig } from '../../components/PlayerConfigForm';
 import './index.css';
 
 export interface Props {
-  p1Name: string;
-  p2Name: string;
+  p1: PlayerConfig;
+  p2: PlayerConfig;
   boardSize: number;
-  setP1Name: React.Dispatch<React.SetStateAction<string>>;
-  setP2Name: React.Dispatch<React.SetStateAction<string>>;
+  setP1: React.Dispatch<React.SetStateAction<PlayerConfig>>;
+  setP2: React.Dispatch<React.SetStateAction<PlayerConfig>>;
   setBoardSize: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -16,25 +17,17 @@ export default function NewGameForm(props: Props) {
 
   return (
     <div className="new-game-form">
-      <label>
-        Player1 Name: {" "}
-        <input
-          name="p1Name"
-          type="string"
-          value={props.p1Name}
-          onChange={e => props.setP1Name(e.target.value)}
-          />
-      </label>
+      <PlayerConfigForm 
+        playerNum={1}
+        player={props.p1}
+        setPlayer={props.setP1}
+      />
       <br />
-      <label>
-        Player2 Name: {" "}
-        <input
-          name="p2Name"
-          type="string"
-          value={props.p2Name}
-          onChange={e => props.setP2Name(e.target.value)}
-          />
-      </label>
+      <PlayerConfigForm
+        playerNum={2}
+        player={props.p2}
+        setPlayer={props.setP2}
+      />
       <br />
       <label>
         Board Size: {" "}

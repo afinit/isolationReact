@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import {range, includes} from 'lodash';
+import React, { useState, useEffect } from "react";
+import { range, includes } from "lodash";
 
-import Board from '../Board';
-import { calculateLegalMoves, openMovesHeuristic, minimax } from '../../common/util';
-import { Link } from 'react-router-dom';
+import Board from "../Board";
+import {
+  calculateLegalMoves,
+  openMovesHeuristic,
+  minimax
+} from "../../common/util";
+import { Link } from "react-router-dom";
 
-import './index.css';
+import "./index.css";
 
+import { Button } from "semantic-ui-react";
 
 interface GameProps {
   boardSize: number;
@@ -23,13 +28,17 @@ const Game = function(props: GameProps) {
   const squarePixels = 34;
   const minGameWidth = 320;
 
-  const [squares, setSquares] = useState((Array<string>(boardSize * boardSize) as any).fill(null));
+  const [squares, setSquares] = useState(
+    (Array<string>(boardSize * boardSize) as any).fill(null)
+  );
   const [p1IsNext, setP1IsNext] = useState(Math.random() < 0.5);
   const [legalMoves, setLegalMoves] = useState(range(0, boardSize * boardSize));
   const [lastMove, setLastMove] = useState<number | undefined>(undefined);
   const legalMovesFlat = legalMoves.flat();
 
-  useEffect(() => {if (!p1IsNext) runAi()})
+  useEffect(() => {
+    if (!p1IsNext) runAi();
+  });
 
   const runAi = async () => {
     const squaresCopy = squares.slice();
@@ -41,17 +50,17 @@ const Game = function(props: GameProps) {
 
       const startTime = new Date().getTime();
       const aiMove = minimax(
-        squaresCopy, 
-        legalMovesFlat, 
-        boardSize, 
-        true, 
-        new Date().getTime() + 1000, 
-        MINIMAX_DEPTH, 
+        squaresCopy,
+        legalMovesFlat,
+        boardSize,
+        true,
+        new Date().getTime() + 1000,
+        MINIMAX_DEPTH,
         openMovesHeuristic
       );
       console.log("minimax: ", legalMovesFlat, aiMove);
       console.log("runtime: ", new Date().getTime() - startTime);
-        
+
       squaresCopy[aiMove.pos] = CURRENTPOSCHAR;
 
       setSquares(squaresCopy);
@@ -59,7 +68,7 @@ const Game = function(props: GameProps) {
       setLastMove(aiMove.pos);
       setLegalMoves(calculateLegalMoves(squaresCopy, aiMove.pos, boardSize));
     }
-  }
+  };
 
   const handleClick = function(i: number) {
     if (p1IsNext) {
@@ -79,26 +88,37 @@ const Game = function(props: GameProps) {
       setLastMove(i);
       setLegalMoves(calculateLegalMoves(squares, i, boardSize));
     }
-  }
+  };
 
   let status;
   if (legalMoves.flat().length !== 0) {
     status = "Next Move: " + (p1IsNext ? p1Name : p2Name);
   } else {
     status = "Winner: " + (p1IsNext ? p2Name : p1Name);
-  };
+  }
 
   const gameWidth = squarePixels * boardSize + 20;
 
-  return(
-    <div className="game" style={{width: gameWidth > minGameWidth ? gameWidth : minGameWidth + "px"}}>
+  return (
+    <div
+      className="game"
+      style={{
+        width: gameWidth > minGameWidth ? gameWidth : minGameWidth + "px"
+      }}
+    >
       <h2>The Game of Isolation</h2>
       <div className="rules">
         <h3>Rules</h3>
         <ul>
           <li>2 players trade turns moving the game piece (ø)</li>
-          <li>The game piece (ø) can be moved like a queen in chess. Horizontally, vertically, diagonally.</li>
-          <li>Moves cannot be to or through previous moves, these will be marked as (#)</li>
+          <li>
+            The game piece (ø) can be moved like a queen in chess. Horizontally,
+            vertically, diagonally.
+          </li>
+          <li>
+            Moves cannot be to or through previous moves, these will be marked
+            as (#)
+          </li>
           <li>First move can go anywhere</li>
           <li>Last player to be able to move wins the game</li>
         </ul>
@@ -110,16 +130,16 @@ const Game = function(props: GameProps) {
         <Board
           squares={squares}
           boardSize={boardSize}
-          onClick={(i) => handleClick(i)}
+          onClick={i => handleClick(i)}
         />
       </div>
-      <button>
-        <Link to={{pathname: "/"}}>
+      <div className="new-game-button">
+        <Button as={Link} to={{ pathname: "/" }}>
           New Game
-        </Link>
-      </button>
+        </Button>
+      </div>
     </div>
-  )
-}
+  );
+};
 
 export default Game;

@@ -1,4 +1,7 @@
-.game a {
-  text-decoration: none;
-  color: black;
+.game {
+  padding: 1rem;
+}
+
+.new-game-button {
+  padding: 1rem;
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown } from "semantic-ui-react";
+import { Form } from "semantic-ui-react";
 
 export type ActorType = "AI" | "Human";
 export interface PlayerConfig {
@@ -27,30 +27,28 @@ const playerOptions = [
 ];
 
 export default function(props: Props) {
+  const playerLabel = `Player${props.playerNum}`
+  const playerNameLabel = `${playerLabel} Name`
   return (
-    <>
-      <label>
-        Player{props.playerNum}:{" "}
-        <Dropdown
-          options={playerOptions}
-          defaultValue={props.player.actor}
-          onChange={(_, data) => {
-            console.log(data)
-            props.setPlayer({
-              name: `${data.value}${props.playerNum}`,
-              actor: data.value as ActorType
-            })
-          }}
-        />
-      </label>
-      <br />
-      <label>
-        Player{props.playerNum} Name:{" "}
-        <input 
-          value={props.player.name} 
-          type="string" 
-          onChange={e => props.setPlayer({...props.player, name: e.target.value})} />
-      </label>
-    </>
+    <Form.Group>
+      <Form.Select 
+        label={playerLabel} 
+        options={playerOptions} 
+        defaultValue={props.player.actor} 
+        onChange={(_, data) => {
+          console.log(data)
+          props.setPlayer({
+            name: `${data.value}${props.playerNum}`,
+            actor: data.value as ActorType
+          })
+        }}
+      />
+      <Form.Input
+        label={playerNameLabel}
+        value={props.player.name}
+        type="string"
+        onChange={e => props.setPlayer({...props.player, name: e.target.value})}
+      />
+    </Form.Group>
   );
 }

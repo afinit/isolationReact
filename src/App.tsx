@@ -18,7 +18,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/game" render={() => <Game boardSize={boardSize} />} />
+        <Route path="/game" render={() => <Game boardSize={boardSize} p1={p1} p2={p2} />} />
         <Route
           path="/"
           render={() => (

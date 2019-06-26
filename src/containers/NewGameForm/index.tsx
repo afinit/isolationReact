@@ -7,6 +7,8 @@ import PlayerConfigForm, {
 import "./index.css";
 import { Form, Button, Segment } from "semantic-ui-react";
 
+import { MIN_BOARD_SIZE, MAX_BOARD_SIZE } from '../../common/constants';
+
 export interface Props {
   p1: PlayerConfig;
   p2: PlayerConfig;
@@ -17,8 +19,6 @@ export interface Props {
 }
 
 export default function NewGameForm(props: Props) {
-  const MIN_BOARD_SIZE = 3
-  const MAX_BOARD_SIZE = 15
   const adjustBoardSize = (boardSize: number) => {
     let boardSizeAdj = MIN_BOARD_SIZE
     if (boardSize > MAX_BOARD_SIZE) boardSizeAdj = MAX_BOARD_SIZE

@@ -12,9 +12,13 @@ import { Link } from "react-router-dom";
 import "./index.css";
 
 import { Button } from "semantic-ui-react";
+import Rules from "../../components/Rules";
+import { PlayerConfig } from "../../components/PlayerConfigForm";
 
 interface GameProps {
   boardSize: number;
+  p1: PlayerConfig;
+  p2: PlayerConfig;
 }
 
 const MINIMAX_DEPTH = 5;
@@ -22,22 +26,22 @@ const PASTMOVECHAR = "#";
 const CURRENTPOSCHAR = "ø";
 
 const Game = function(props: GameProps) {
+  const nextPlayer = (p: PlayerConfig) => p === props.p1 ? props.p2 : props.p1
+
   const boardSize = props.boardSize;
-  const p1Name = "You";
-  const p2Name = "AI";
   const squarePixels = 34;
   const minGameWidth = 320;
 
   const [squares, setSquares] = useState(
     (Array<string>(boardSize * boardSize) as any).fill(null)
   );
-  const [p1IsNext, setP1IsNext] = useState(Math.random() < 0.5);
+  const [currPlayer, setCurrPlayer] = useState(Math.random() < 0.5 ? props.p1 : props.p2);
   const [legalMoves, setLegalMoves] = useState(range(0, boardSize * boardSize));
   const [lastMove, setLastMove] = useState<number | undefined>(undefined);
   const legalMovesFlat = legalMoves.flat();
 
   useEffect(() => {
-    if (!p1IsNext) runAi();
+    if (currPlayer.actor === "AI") runAi();
   });
 
   const runAi = async () => {
@@ -64,14 +68,14 @@ const Game = function(props: GameProps) {
       squaresCopy[aiMove.pos] = CURRENTPOSCHAR;
 
       setSquares(squaresCopy);
-      setP1IsNext(!p1IsNext);
+      setCurrPlayer(nextPlayer(currPlayer));
       setLastMove(aiMove.pos);
       setLegalMoves(calculateLegalMoves(squaresCopy, aiMove.pos, boardSize));
     }
   };
 
   const handleClick = function(i: number) {
-    if (p1IsNext) {
+    if (currPlayer.actor === "Human") {
       const squaresCopy = squares.slice();
       const legalMovesFlat = legalMoves.flat();
 
@@ -84,7 +88,7 @@ const Game = function(props: GameProps) {
       squaresCopy[i] = CURRENTPOSCHAR;
 
       setSquares(squaresCopy);
-      setP1IsNext(!p1IsNext);
+      setCurrPlayer(nextPlayer(currPlayer));
       setLastMove(i);
       setLegalMoves(calculateLegalMoves(squares, i, boardSize));
     }
@@ -92,9 +96,9 @@ const Game = function(props: GameProps) {
 
   let status;
   if (legalMoves.flat().length !== 0) {
-    status = "Next Move: " + (p1IsNext ? p1Name : p2Name);
+    status = "Next Move: " + currPlayer.name;
   } else {
-    status = "Winner: " + (p1IsNext ? p2Name : p1Name);
+    status = "Winner: " + nextPlayer(currPlayer).name;
   }
 
   const gameWidth = squarePixels * boardSize + 20;
@@ -107,22 +111,8 @@ const Game = function(props: GameProps) {
       }}
     >
       <h2>The Game of Isolation</h2>
-      <div className="rules">
-        <h3>Rules</h3>
-        <ul>
-          <li>2 players trade turns moving the game piece (ø)</li>
-          <li>
-            The game piece (ø) can be moved like a queen in chess. Horizontally,
-            vertically, diagonally.
-          </li>
-          <li>
-            Moves cannot be to or through previous moves, these will be marked
-            as (#)
-          </li>
-          <li>First move can go anywhere</li>
-          <li>Last player to be able to move wins the game</li>
-        </ul>
-      </div>
+      <Rules />
+
       <div className="game-info">
         <div>{status}</div>
       </div>

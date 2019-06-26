@@ -1,6 +1,5 @@
 import {range, takeWhile} from 'lodash';
-
-const WINNING = 1000;
+import { WINNING_SCORE } from './constants';
 
 interface Score {
   score: number;
@@ -14,7 +13,7 @@ function getLineRange(pos: number, rangeStop: number, step: number) {
 function filterLineRange(
   lineRange: Array<number>, 
   squares: Array<string>, 
-  extraFilter = (i: number) => true
+  extraFilter = (_: number) => true
 ) {
   return takeWhile(lineRange, (i) => squares[i] === null && extraFilter(i));
 }
@@ -76,7 +75,7 @@ export function minimax(
 ): Score {
   if (legalMoves.length === 0) {
     // if there are no moves, this is bad for maxPlayer
-    return {score: maxPlayer ? -(WINNING + depth) : WINNING + depth, pos: -1};
+    return {score: maxPlayer ? -(WINNING_SCORE + depth) : WINNING_SCORE + depth, pos: -1};
   }
 
   const moveScores: Array<{score: number, pos: number}> = legalMoves.map( (move: number) => {

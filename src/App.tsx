@@ -14,11 +14,18 @@ export default function App() {
     actor: "AI"
   })
   const [boardSize, setBoardSize] = useState(9);
+  const [minimaxDepth, setMinimaxDepth] = useState(5);
 
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/game" render={() => <Game boardSize={boardSize} p1={p1} p2={p2} />} />
+        <Route path="/game" render={
+          () => <Game 
+                  boardSize={boardSize}
+                  p1={p1} 
+                  p2={p2}
+                  minimaxDepth={minimaxDepth}/>
+        } />
         <Route
           path="/"
           render={() => (
@@ -26,9 +33,11 @@ export default function App() {
               p1={p1}
               p2={p2}
               boardSize={boardSize}
+              minimaxDepth={minimaxDepth}
               setP1={setP1}
               setP2={setP2}
               setBoardSize={setBoardSize}
+              setMinimaxDepth={setMinimaxDepth}
             />
           )}
         />

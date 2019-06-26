@@ -7,25 +7,30 @@ import PlayerConfigForm, {
 import "./index.css";
 import { Form, Button, Segment } from "semantic-ui-react";
 
-import { MIN_BOARD_SIZE, MAX_BOARD_SIZE } from '../../common/constants';
+import { MIN_BOARD_SIZE, MAX_BOARD_SIZE, MIN_MINIMAX_DEPTH, MAX_MINIMAX_DEPTH } from '../../common/constants';
 
 export interface Props {
   p1: PlayerConfig;
   p2: PlayerConfig;
   boardSize: number;
+  minimaxDepth: number;
   setP1: React.Dispatch<React.SetStateAction<PlayerConfig>>;
   setP2: React.Dispatch<React.SetStateAction<PlayerConfig>>;
   setBoardSize: React.Dispatch<React.SetStateAction<number>>;
+  setMinimaxDepth: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function NewGameForm(props: Props) {
-  const adjustBoardSize = (boardSize: number) => {
-    let boardSizeAdj = MIN_BOARD_SIZE
-    if (boardSize > MAX_BOARD_SIZE) boardSizeAdj = MAX_BOARD_SIZE
-    else if (boardSize > MIN_BOARD_SIZE) boardSizeAdj = boardSize
-
-    return boardSizeAdj
+  const adjustNumber = (num: number, minNum: number, maxNum: number) => {
+    let numAdj = minNum;
+    if (num > maxNum) numAdj = maxNum
+    else if (num > minNum) numAdj = num
+    
+    return numAdj;
   }
+
+  const adjustBoardSize = (boardSize: number) => adjustNumber(boardSize, MIN_BOARD_SIZE, MAX_BOARD_SIZE)
+  const adjustMinimaxDepth = (minimaxDepth: number) => adjustNumber(minimaxDepth, MIN_MINIMAX_DEPTH, MAX_MINIMAX_DEPTH)
 
   return (
     <div className="new-game-form">
@@ -45,9 +50,18 @@ export default function NewGameForm(props: Props) {
           label="Board Size"
           type="number"
           value={props.boardSize}
-          min="3"
-          max="15"
+          min={MIN_BOARD_SIZE}
+          max={MAX_BOARD_SIZE}
           onChange={e => { props.setBoardSize(adjustBoardSize(+e.target.value)) }}
+        />
+
+        <Form.Input
+          label="Minimax Depth (AI Smartness Level)"
+          type="number"
+          value={props.minimaxDepth}
+          min={MIN_MINIMAX_DEPTH}
+          max={MAX_MINIMAX_DEPTH}
+          onChange={e => { props.setMinimaxDepth(adjustMinimaxDepth(+e.target.value)) }}
         />
 
         <Button as={Link} to={{ pathname: "/game" }} >

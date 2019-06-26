@@ -14,16 +14,14 @@ import "./index.css";
 import { Button } from "semantic-ui-react";
 import Rules from "../../components/Rules";
 import { PlayerConfig } from "../../components/PlayerConfigForm";
+import { PASTMOVECHAR, CURRENTPOSCHAR } from '../../common/constants';
 
 interface GameProps {
   boardSize: number;
   p1: PlayerConfig;
   p2: PlayerConfig;
+  minimaxDepth: number;
 }
-
-const MINIMAX_DEPTH = 5;
-const PASTMOVECHAR = "#";
-const CURRENTPOSCHAR = "ø";
 
 const Game = function(props: GameProps) {
   const nextPlayer = (p: PlayerConfig) => p === props.p1 ? props.p2 : props.p1
@@ -59,7 +57,7 @@ const Game = function(props: GameProps) {
         boardSize,
         true,
         new Date().getTime() + 1000,
-        MINIMAX_DEPTH,
+        props.minimaxDepth,
         openMovesHeuristic
       );
       console.log("minimax: ", legalMovesFlat, aiMove);

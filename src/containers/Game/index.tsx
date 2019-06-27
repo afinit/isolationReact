@@ -14,13 +14,12 @@ import "./index.css";
 import { Button } from "semantic-ui-react";
 import Rules from "../../components/Rules";
 import { PlayerConfig } from "../../components/PlayerConfigForm";
-import { PASTMOVECHAR, CURRENTPOSCHAR } from '../../common/constants';
+import { PASTMOVECHAR, CURRENTPOSCHAR, DEFAULT_MINIMAX_DEPTH } from '../../common/constants';
 
 interface GameProps {
   boardSize: number;
   p1: PlayerConfig;
   p2: PlayerConfig;
-  minimaxDepth: number;
 }
 
 const Game = function(props: GameProps) {
@@ -39,10 +38,10 @@ const Game = function(props: GameProps) {
   const legalMovesFlat = legalMoves.flat();
 
   useEffect(() => {
-    if (currPlayer.actor === "AI") runAi();
+    if (currPlayer.actor === "AI") runAi(currPlayer.minimaxDepth || DEFAULT_MINIMAX_DEPTH);
   });
 
-  const runAi = async () => {
+  const runAi = async (minimaxDepth: number) => {
     const squaresCopy = squares.slice();
 
     if (legalMovesFlat.length > 0) {
@@ -57,7 +56,7 @@ const Game = function(props: GameProps) {
         boardSize,
         true,
         new Date().getTime() + 1000,
-        props.minimaxDepth,
+        minimaxDepth,
         openMovesHeuristic
       );
       console.log("minimax: ", legalMovesFlat, aiMove);

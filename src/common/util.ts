@@ -120,3 +120,11 @@ export function floodfill(squares: Array<string>, pos: number, boardSize: number
 
   return flood;
 }
+  
+export const boundNumber = (num: number, minNum: number, maxNum: number) => {
+  let numAdj = minNum;
+  if (num > maxNum) numAdj = maxNum
+  else if (num > minNum) numAdj = num
+  
+  return numAdj;
+}

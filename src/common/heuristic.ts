@@ -1,6 +1,8 @@
 import { calculateLegalMoves, Score } from "./util";
 
 // SUPPORTING METHODS SECTION
+//  NOTE: These heuristics evaluate the state of the board at the beginning of the maxPlayer's turn
+//    in other words, this is an evaluation of the current state of the board(squares) from the current position(pos)
 const floodfillHeuristicMethod = (squares: Array<string>, pos: number, boardSize: number, maxPlayer: boolean) => {
   const floodSize = floodfill(squares, pos, boardSize).length;
   const multiplier = floodSize % 2 === 0 ? 1 : -1;

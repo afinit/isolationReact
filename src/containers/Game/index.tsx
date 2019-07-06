@@ -11,7 +11,7 @@ import { Button } from "semantic-ui-react";
 import Rules from "../../components/Rules";
 import { PlayerConfig } from "../../components/PlayerConfigForm";
 import { PASTMOVECHAR, CURRENTPOSCHAR, DEFAULT_MINIMAX_DEPTH, DEFAULT_HEURISTIC } from '../../common/constants';
-import { minimax } from "../../common/aiMethods";
+import { aiAlgorithm } from "../../common/aiMethods";
 
 interface GameProps {
   boardSize: number;
@@ -48,17 +48,18 @@ const Game = function(props: GameProps) {
       }
 
       const startTime = new Date().getTime();
-      const aiMove = minimax(
+      const aiMove = aiAlgorithm(
         squaresCopy,
         legalMovesFlat,
         boardSize,
         true,
         new Date().getTime() + 1000,
         minimaxDepth,
-        (currPlayer.heuristic || DEFAULT_HEURISTIC)
+        (currPlayer.heuristic || DEFAULT_HEURISTIC),
+        false
       );
       const name = currPlayer.heuristic ? currPlayer.heuristic.name : "NONE";
-      console.log("minimax: ", legalMovesFlat, name, aiMove);
+      console.log("minimax: ", name, aiMove);
       console.log("runtime: ", new Date().getTime() - startTime);
 
       squaresCopy[aiMove.pos] = CURRENTPOSCHAR;

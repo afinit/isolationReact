@@ -3,7 +3,7 @@ import Game from "./containers/Game";
 import { Switch, Route, BrowserRouter } from "react-router-dom";
 import NewGameForm from "./containers/NewGameForm";
 import { PlayerConfig } from "./components/PlayerConfigForm";
-import { DEFAULT_MINIMAX_DEPTH } from "./common/constants";
+import { DEFAULT_MINIMAX_DEPTH, DEFAULT_HEURISTIC } from "./common/constants";
 
 export default function App() {
   const [p1, setP1] = useState<PlayerConfig>({
@@ -13,7 +13,8 @@ export default function App() {
   const [p2, setP2] = useState<PlayerConfig>({
     name: "AI2",
     actor: "AI",
-    minimaxDepth: DEFAULT_MINIMAX_DEPTH
+    minimaxDepth: DEFAULT_MINIMAX_DEPTH,
+    heuristic: DEFAULT_HEURISTIC
   })
   const [boardSize, setBoardSize] = useState(9);
 

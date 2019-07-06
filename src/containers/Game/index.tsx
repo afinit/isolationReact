@@ -4,7 +4,6 @@ import { range, includes } from "lodash";
 import Board from "../Board";
 import {
   calculateLegalMoves,
-  openMovesHeuristic,
   minimax
 } from "../../common/util";
 import { Link } from "react-router-dom";
@@ -14,7 +13,7 @@ import "./index.css";
 import { Button } from "semantic-ui-react";
 import Rules from "../../components/Rules";
 import { PlayerConfig } from "../../components/PlayerConfigForm";
-import { PASTMOVECHAR, CURRENTPOSCHAR, DEFAULT_MINIMAX_DEPTH } from '../../common/constants';
+import { PASTMOVECHAR, CURRENTPOSCHAR, DEFAULT_MINIMAX_DEPTH, DEFAULT_HEURISTIC } from '../../common/constants';
 
 interface GameProps {
   boardSize: number;
@@ -32,7 +31,8 @@ const Game = function(props: GameProps) {
   const [squares, setSquares] = useState(
     (Array<string>(boardSize * boardSize) as any).fill(null)
   );
-  const [currPlayer, setCurrPlayer] = useState(Math.random() < 0.5 ? props.p1 : props.p2);
+  const [startingPlayer] = useState(Math.random() < 0.5 ? props.p1 : props.p2);
+  const [currPlayer, setCurrPlayer] = useState(startingPlayer);
   const [legalMoves, setLegalMoves] = useState(range(0, boardSize * boardSize));
   const [lastMove, setLastMove] = useState<number | undefined>(undefined);
   const legalMovesFlat = legalMoves.flat();
@@ -57,17 +57,18 @@ const Game = function(props: GameProps) {
         true,
         new Date().getTime() + 1000,
         minimaxDepth,
-        openMovesHeuristic
+        (currPlayer.heuristic || DEFAULT_HEURISTIC)
       );
-      console.log("minimax: ", legalMovesFlat, aiMove);
+      const name = currPlayer.heuristic ? currPlayer.heuristic.name : "NONE";
+      console.log("minimax: ", legalMovesFlat, name, aiMove);
       console.log("runtime: ", new Date().getTime() - startTime);
 
       squaresCopy[aiMove.pos] = CURRENTPOSCHAR;
 
       setSquares(squaresCopy);
-      setCurrPlayer(nextPlayer(currPlayer));
       setLastMove(aiMove.pos);
       setLegalMoves(calculateLegalMoves(squaresCopy, aiMove.pos, boardSize));
+      setCurrPlayer(nextPlayer(currPlayer));
     }
   };
 
@@ -111,7 +112,11 @@ const Game = function(props: GameProps) {
       <Rules />
 
       <div className="game-info">
-        <div>{status}</div>
+        <div>
+          {"Starting Player: " + startingPlayer.name}
+          <br />
+          {status}
+        </div>
       </div>
       <div className="game-board">
         <Board

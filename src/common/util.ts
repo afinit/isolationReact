@@ -1,6 +1,4 @@
 import {range, takeWhile} from 'lodash';
-import { WINNING_SCORE } from './constants';
-import { Heuristic } from './heuristic';
 
 export interface Score {
   score: number;
@@ -39,45 +37,6 @@ function calculateQueenMoves(squares: Array<string>, pos: number, boardSize: num
 }
 
 export const calculateLegalMoves = calculateQueenMoves;
-
-
-// AI METHODS SECTION
-
-// calculate minimax decision for the current state of the board from viewpoint of maxPlayer
-//   maxPlayer is the one moving, so current state would be bad for maxPlayer if there are no moves
-export function minimax(
-  squares: Array<string>, 
-  legalMoves: Array<number>, 
-  boardSize: number, 
-  maxPlayer: boolean, 
-  endTime: number, 
-  depth: number,
-  heuristic: Heuristic
-): Score {
-  if (legalMoves.length === 0) {
-    // if there are no moves, this is bad for maxPlayer
-    return {score: maxPlayer ? -(WINNING_SCORE + depth) : WINNING_SCORE + depth, pos: -1};
-  }
-
-  const moveScores: Array<{score: number, pos: number}> = legalMoves.map( (move: number) => {
-    // collect heuristics if we are at depth limit or time is up.. don't actually need to "move" the piece here for the open moves heuristic because we just want legal moves from the proposed position
-    if ( depth === 0 || endTime < new Date().getTime()) {
-      return heuristic.evaluate(squares, move, boardSize, !maxPlayer);
-    }
-    else {
-      const squaresCopy = squares.slice();
-      squaresCopy[move] = "t";
-      const currentLegalMoves = calculateLegalMoves(squaresCopy, move, boardSize).flat();
-      return {score: minimax(squaresCopy, currentLegalMoves, boardSize, !maxPlayer, endTime, depth - 1, heuristic).score, pos: move}
-    }
-  })
-
-  const scores = moveScores.map(o => o.score);
-  // maxPlayer wants to maximize the outcome of the decision
-  const bestScore = maxPlayer ? Math.max(...scores) : Math.min(...scores);
-
-  return moveScores[scores.indexOf(bestScore)];
-}
 
 export const boundNumber = (num: number, minNum: number, maxNum: number) => {
   let numAdj = minNum;

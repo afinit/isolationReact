@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react";
 import { range, includes } from "lodash";
 
 import Board from "../Board";
-import {
-  calculateLegalMoves,
-  minimax
-} from "../../common/util";
+import { calculateLegalMoves } from "../../common/util";
 import { Link } from "react-router-dom";
 
 import "./index.css";
@@ -14,6 +11,7 @@ import { Button } from "semantic-ui-react";
 import Rules from "../../components/Rules";
 import { PlayerConfig } from "../../components/PlayerConfigForm";
 import { PASTMOVECHAR, CURRENTPOSCHAR, DEFAULT_MINIMAX_DEPTH, DEFAULT_HEURISTIC } from '../../common/constants';
+import { minimax } from "../../common/aiMethods";
 
 interface GameProps {
   boardSize: number;

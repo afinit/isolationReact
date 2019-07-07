@@ -1,6 +1,6 @@
 import React from "react";
-import { Form } from "semantic-ui-react";
-import { DEFAULT_MINIMAX_DEPTH, MIN_MINIMAX_DEPTH, MAX_MINIMAX_DEPTH, DEFAULT_HEURISTIC } from "../../common/constants";
+import { Form, Checkbox } from "semantic-ui-react";
+import { DEFAULT_MINIMAX_DEPTH, MIN_MINIMAX_DEPTH, MAX_MINIMAX_DEPTH, DEFAULT_HEURISTIC, DEFAULT_ALPHABETA } from "../../common/constants";
 import { boundNumber } from "../../common/util";
 import { Heuristic, heuristicOptions, heuristicOptionDictionary, HeuristicValue } from "../../common/heuristic";
 
@@ -10,6 +10,7 @@ export interface PlayerConfig {
   actor: ActorType;
   minimaxDepth?: number;
   heuristic?: Heuristic;
+  alphaBeta?: boolean;
 }
 
 interface Props {
@@ -38,6 +39,7 @@ export default function(props: Props) {
   const playerNameLabel = `${playerLabel} Name`
   let minimaxDepthInput;
   let heuristicInput;
+  let alphaBetaInput;
   if (props.player.actor === "AI") {
     const minimaxDepthLabel = `${playerLabel} Minimax Depth (AI Smartness Level)`
     const minimaxDepth = props.player.minimaxDepth !== undefined ? props.player.minimaxDepth : DEFAULT_MINIMAX_DEPTH;
@@ -59,11 +61,26 @@ export default function(props: Props) {
         defaultValue={heuristic.name}
         type="string"
         onChange={(_, data) => {
-          console.log(data);
           props.setPlayer({
             ...props.player, 
             heuristic: heuristicOptionDictionary[data.value as HeuristicValue].heuristic
           })}}
+      />
+    )
+
+    const alphaBetaLabel = `${playerLabel} AlphaBeta`;
+    const alphaBeta = props.player.alphaBeta ? props.player.alphaBeta : DEFAULT_ALPHABETA;
+    alphaBetaInput = (
+      <Checkbox
+        label={alphaBetaLabel}
+        toggle
+        checked={alphaBeta}
+        onChange={ () => 
+          props.setPlayer({
+            ...props.player,
+            alphaBeta: !alphaBeta
+          })
+        }
       />
     )
   }
@@ -79,7 +96,8 @@ export default function(props: Props) {
             name: `${data.value}${props.playerNum}`,
             actor: data.value as ActorType,
             minimaxDepth: data.value === "AI" ? DEFAULT_MINIMAX_DEPTH : undefined,
-            heuristic: data.value === "AI" ? DEFAULT_HEURISTIC : undefined
+            heuristic: data.value === "AI" ? DEFAULT_HEURISTIC : undefined,
+            alphaBeta: data.value === "AI" ? DEFAULT_ALPHABETA : undefined
           })
         }}
       />
@@ -91,6 +109,7 @@ export default function(props: Props) {
       />
       {minimaxDepthInput}
       {heuristicInput}
+      {alphaBetaInput}
     </Form.Group>
   );
 }

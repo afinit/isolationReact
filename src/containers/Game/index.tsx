@@ -10,7 +10,7 @@ import "./index.css";
 import { Button } from "semantic-ui-react";
 import Rules from "../../components/Rules";
 import { PlayerConfig } from "../../components/PlayerConfigForm";
-import { PASTMOVECHAR, CURRENTPOSCHAR, DEFAULT_MINIMAX_DEPTH, DEFAULT_HEURISTIC } from '../../common/constants';
+import { PASTMOVECHAR, CURRENTPOSCHAR, DEFAULT_MINIMAX_DEPTH, DEFAULT_HEURISTIC, DEFAULT_ALPHABETA } from '../../common/constants';
 import { aiAlgorithm } from "../../common/aiMethods";
 
 interface GameProps {
@@ -56,7 +56,7 @@ const Game = function(props: GameProps) {
         new Date().getTime() + 1000,
         minimaxDepth,
         (currPlayer.heuristic || DEFAULT_HEURISTIC),
-        false
+        currPlayer.alphaBeta === undefined ? DEFAULT_ALPHABETA : currPlayer.alphaBeta
       );
       const name = currPlayer.heuristic ? currPlayer.heuristic.name : "NONE";
       console.log("minimax: ", name, aiMove);

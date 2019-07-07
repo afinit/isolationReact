@@ -7,5 +7,6 @@ export const MIN_MINIMAX_DEPTH = 1;
 export const MAX_MINIMAX_DEPTH = 15;
 export const DEFAULT_MINIMAX_DEPTH = 5;
 export const DEFAULT_HEURISTIC = heuristicOptionDictionary["OpenMoves"].heuristic;
+export const DEFAULT_ALPHABETA = false;
 export const PASTMOVECHAR = "#";
 export const CURRENTPOSCHAR = "ø";

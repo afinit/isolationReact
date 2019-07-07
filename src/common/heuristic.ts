@@ -1,4 +1,4 @@
-import { calculateLegalMoves, Score } from "./util";
+import { calculateLegalMoves, ScoreState } from "./util";
 
 // SUPPORTING METHODS SECTION
 //  NOTE: These heuristics evaluate the state of the board at the beginning of the maxPlayer's turn
@@ -60,7 +60,7 @@ function floodfill(squares: Array<string>, pos: number, boardSize: number) {
 // HEURISTICS SECTION
 export interface Heuristic {
   name: string;
-  evaluate: (squares: Array<string>, pos: number, boardSize: number, maxPlayer: boolean) => Score;
+  evaluate: (squares: Array<string>, pos: number, boardSize: number, maxPlayer: boolean) => ScoreState;
 }
 
 export const openMovesHeuristic: Heuristic = {

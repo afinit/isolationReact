@@ -1,10 +1,10 @@
 import { Heuristic } from "./heuristic";
-import { Score, calculateLegalMoves } from "./util";
+import { ScoreState, calculateLegalMoves } from "./util";
 import { WINNING_SCORE } from "./constants";
 
 // AI METHODS SECTION
 
-function bestScore(moveScores: Score[], maxPlayer: boolean): Score {
+function bestScore(moveScores: ScoreState[], maxPlayer: boolean): ScoreState {
   const scores = moveScores.map(o => o.score);
   // maxPlayer wants to maximize the outcome of the decision
   const bestScore = maxPlayer ? Math.max(...scores) : Math.min(...scores);
@@ -21,7 +21,7 @@ export function aiAlgorithm(
   depth: number,
   heuristic: Heuristic,
   useAlphaBeta: boolean
-): Score {
+): ScoreState {
   const moveScores = legalMoves.map(
     move => {
       const squaresCopy = squares.slice();
@@ -51,13 +51,13 @@ export function minimax(
   endTime: number, 
   depth: number,
   heuristic: Heuristic
-): Score {
+): ScoreState {
   const legalMoves = calculateLegalMoves(squares, move, boardSize).flat();
   if (legalMoves.length === 0) {
     // if there are no moves, this is bad for maxPlayer
-    return {score: maxPlayer ? -(WINNING_SCORE + depth) : WINNING_SCORE + depth, pos: move};
+    return {score: maxPlayer ? -(WINNING_SCORE + depth) : WINNING_SCORE + depth, pos: move, depth};
   } else if ( depth === 0 || endTime < new Date().getTime() ) {
-    return heuristic.evaluate(squares, move, boardSize, maxPlayer);
+    return {...heuristic.evaluate(squares, move, boardSize, maxPlayer), depth};
   } else {
     const moveScores = legalMoves.map( newMove => {
       const squaresCopy = squares.slice();
@@ -80,12 +80,12 @@ function alphaBetaMax(
   heuristic: Heuristic,
   alpha: number = Number.MIN_SAFE_INTEGER,
   beta: number = Number.MAX_SAFE_INTEGER
-): Score {
+): ScoreState {
   const legalMoves = calculateLegalMoves(squares, move, boardSize).flat();
   if (legalMoves.length === 0) {
-    return {score: -(WINNING_SCORE + depth), pos: move};
+    return {score: -(WINNING_SCORE + depth), pos: move, depth};
   } else if (depth === 0 || endTime < new Date().getTime()) {
-    return heuristic.evaluate(squares, move, boardSize, true);
+    return {...heuristic.evaluate(squares, move, boardSize, true), depth};
   } else {
     // default state starts at the move passed
     const startState = {score: Number.MIN_SAFE_INTEGER, pos: move, alpha, beta};
@@ -95,7 +95,7 @@ function alphaBetaMax(
         const squaresCopy = squares.slice();
         squaresCopy[newMove] = "t";
         const retVal = alphaBetaMin(squaresCopy, newMove, boardSize, endTime, depth-1, heuristic, accState.alpha, accState.beta);
-        return {...accState, score: retVal.score, pos: newMove, alpha: Math.max(retVal.score, accState.alpha)}
+        return {...accState, score: retVal.score, pos: newMove, alpha: Math.max(retVal.score, accState.alpha), depth: retVal.depth};
       }
     }, startState)
     return {...bestMove, pos: move}
@@ -111,12 +111,12 @@ function alphaBetaMin(
   heuristic: Heuristic,
   alpha: number = Number.MIN_SAFE_INTEGER,
   beta: number = Number.MAX_SAFE_INTEGER
-): Score {
+): ScoreState {
   const legalMoves = calculateLegalMoves(squares, move, boardSize).flat();
   if (legalMoves.length === 0) {
-    return {score: WINNING_SCORE + depth, pos: move};
+    return {score: WINNING_SCORE + depth, pos: move, depth};
   } else if (depth === 0 || endTime < new Date().getTime()) {
-    return heuristic.evaluate(squares, move, boardSize, false);
+    return {...heuristic.evaluate(squares, move, boardSize, false), depth};
   } else {
     // default state starts at the move passed
     const startState = {score: Number.MAX_SAFE_INTEGER, pos: move, alpha, beta};
@@ -126,7 +126,7 @@ function alphaBetaMin(
         const squaresCopy = squares.slice();
         squaresCopy[newMove] = "t";
         const retVal = alphaBetaMax(squaresCopy, newMove, boardSize, endTime, depth-1, heuristic, accState.alpha, accState.beta);
-        return {...accState, score: retVal.score, pos: newMove, beta: Math.min(retVal.score, accState.beta)}
+        return {...accState, score: retVal.score, pos: newMove, beta: Math.min(retVal.score, accState.beta), depth: retVal.depth};
       }
     }, startState)
     return {...bestMove, pos: move}

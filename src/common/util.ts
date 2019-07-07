@@ -1,8 +1,9 @@
 import {range, takeWhile} from 'lodash';
 
-export interface Score {
+export interface ScoreState {
   score: number;
   pos: number;
+  depth?: number;
 }
 
 function getLineRange(pos: number, rangeStop: number, step: number) {

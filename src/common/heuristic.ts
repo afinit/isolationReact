@@ -1,17 +1,18 @@
-import { calculateLegalMoves, ScoreState } from "./util";
+import { ScoreState } from "./util";
+import { Game } from "./Game";
 
 // SUPPORTING METHODS SECTION
 //  NOTE: These heuristics evaluate the state of the board at the beginning of the maxPlayer's turn
 //    in other words, this is an evaluation of the current state of the board(squares) from the current position(pos)
-const floodfillHeuristicMethod = (squares: Array<string>, pos: number, boardSize: number, maxPlayer: boolean) => {
-  const floodSize = floodfill(squares, pos, boardSize).length;
+const floodfillHeuristicMethod = (game: Game, pos: number, maxPlayer: boolean) => {
+  const floodSize = floodfill(game.getBoard(), pos, game.boardSize).length;
   const multiplier = floodSize % 2 === 0 ? 1 : -1;
-  const score = multiplier * (boardSize - floodSize);
+  const score = multiplier * (game.boardSize - floodSize);
   return maxPlayer ? {score, pos} : {score: -score, pos};
 }
 
-const openMovesHeuristicMethod = (squares: Array<string>, pos: number, boardSize: number, maxPlayer: boolean) => {
-  const moves = calculateLegalMoves(squares, pos, boardSize).flat().length;
+const openMovesHeuristicMethod = (game: Game, pos: number, maxPlayer: boolean) => {
+  const moves = game.getLegalMoves().length;
   return maxPlayer ? {score: moves, pos} : {score: -moves, pos};
 }
 
@@ -60,7 +61,7 @@ function floodfill(squares: Array<string>, pos: number, boardSize: number) {
 // HEURISTICS SECTION
 export interface Heuristic {
   name: string;
-  evaluate: (squares: Array<string>, pos: number, boardSize: number, maxPlayer: boolean) => ScoreState;
+  evaluate: (game: Game, pos: number, maxPlayer: boolean) => ScoreState;
 }
 
 export const openMovesHeuristic: Heuristic = {

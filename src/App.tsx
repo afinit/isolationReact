@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Game from "./containers/Game";
+import GameContainer from "./containers/GameContainer";
 import { Switch, Route, BrowserRouter } from "react-router-dom";
 import NewGameForm from "./containers/NewGameForm";
 import { PlayerConfig } from "./components/PlayerConfigForm";
@@ -23,7 +23,7 @@ export default function App() {
     <BrowserRouter>
       <Switch>
         <Route path="/game" render={
-          () => <Game 
+          () => <GameContainer
                   boardSize={boardSize}
                   p1={p1} 
                   p2={p2} />

@@ -31,19 +31,17 @@ const GameContainer = function(props: GameProps) {
   const squarePixels = 34;
   const minGameWidth = 320;
 
-  const [initGame] = useState(
-    initializeGame(
-      boardSize, 
-      [props.p1, props.p2],
-      (Array<string>(boardSize * boardSize) as any).fill(null),
-      Math.random() < 0.5 ? 0 : 1
-    ) as Game
-  );
+  const [initGame] = useState(initializeGame(
+    boardSize,
+    [props.p1, props.p2],
+    (Array<string>(boardSize * boardSize) as any).fill(null),
+    Math.random() < 0.5 ? 0 : 1
+  ) as Game);
   const [game, setGame] = useState(initGame);
   const currPlayer: PlayerConfig = game.getPlayer();
 
   useEffect(() => {
-    if (currPlayer.actor === "AI")
+    if (currPlayer.actor === "AI" && !game.reviewMode)
       runAi(currPlayer.minimaxDepth || DEFAULT_MINIMAX_DEPTH);
   });
 
@@ -68,13 +66,51 @@ const GameContainer = function(props: GameProps) {
     }
   };
 
-  const handleClick = function(i: number) {
-    if (currPlayer.actor === "Human") {
+  const handleSquareClick = function(i: number) {
+    if (currPlayer.actor === "Human" && !game.reviewMode) {
       if (!includes(game.getLegalMoves(), i)) return;
 
       setGame((prevState: Game) => prevState.move(i));
     }
   };
+
+  const startReviewClick = function() {
+    setGame((prevState: Game) => prevState.copy().startReview());
+  };
+
+  const endReviewClick = function() {
+    setGame((prevState: Game) => prevState.endReview());
+  };
+  const lastMoveClick = function() {
+    setGame((prevState: Game) => prevState.lastMove());
+  };
+  const nextMoveClick = function() {
+    setGame((prevState: Game) => prevState.nextMove());
+  };
+  const restartHereClick = function() {
+    setGame((prevState: Game) => prevState.restartHere());
+  };
+
+  let reviewSection = (
+    <div className="game-buttons">
+      <Button onClick={startReviewClick}>Review Moves</Button>
+    </div>
+  );
+  if (game.reviewMode) {
+    reviewSection = (
+      <>
+        <div className="game-buttons">
+          <Button onClick={endReviewClick}>End Review</Button>
+          <Button onClick={restartHereClick}>Restart Here</Button>
+          <h3>Review Mode</h3>
+        </div>
+        <div className="game-buttons">
+          <Button onClick={lastMoveClick}>Last Move</Button>
+          <Button onClick={nextMoveClick}>Next Move</Button>
+        </div>
+      </>
+    );
+  }
 
   let status;
   if (game.getLegalMoves().length !== 0) {
@@ -106,14 +142,15 @@ const GameContainer = function(props: GameProps) {
         <Board
           squares={game.getBoard()}
           boardSize={boardSize}
-          onClick={i => handleClick(i)}
+          onClick={i => handleSquareClick(i)}
         />
       </div>
-      <div className="new-game-button">
+      <div className="game-buttons">
         <Button as={Link} to={{ pathname: "/" }}>
           New Game
         </Button>
       </div>
+      {reviewSection}
     </div>
   );
 };

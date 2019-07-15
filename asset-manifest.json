@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/react_isolation/static/css/main.c9d5a171.chunk.css",
-    "main.js": "/react_isolation/static/js/main.dcd2211b.chunk.js",
-    "main.js.map": "/react_isolation/static/js/main.dcd2211b.chunk.js.map",
-    "runtime~main.js": "/react_isolation/static/js/runtime~main.82536a08.js",
-    "runtime~main.js.map": "/react_isolation/static/js/runtime~main.82536a08.js.map",
-    "static/css/2.4c137c7d.chunk.css": "/react_isolation/static/css/2.4c137c7d.chunk.css",
-    "static/js/2.016b8168.chunk.js": "/react_isolation/static/js/2.016b8168.chunk.js",
-    "static/js/2.016b8168.chunk.js.map": "/react_isolation/static/js/2.016b8168.chunk.js.map",
-    "index.html": "/react_isolation/index.html",
-    "precache-manifest.8f86c5dcadd4ab4e91f2b00cd8d86dec.js": "/react_isolation/precache-manifest.8f86c5dcadd4ab4e91f2b00cd8d86dec.js",
-    "service-worker.js": "/react_isolation/service-worker.js",
-    "static/css/2.4c137c7d.chunk.css.map": "/react_isolation/static/css/2.4c137c7d.chunk.css.map",
-    "static/css/main.c9d5a171.chunk.css.map": "/react_isolation/static/css/main.c9d5a171.chunk.css.map",
-    "static/media/semantic.min.css": "/react_isolation/static/media/outline-icons.ef60a4f6.woff"
+    "main.css": "/isolationReact/static/css/main.c9d5a171.chunk.css",
+    "main.js": "/isolationReact/static/js/main.dcd2211b.chunk.js",
+    "main.js.map": "/isolationReact/static/js/main.dcd2211b.chunk.js.map",
+    "runtime~main.js": "/isolationReact/static/js/runtime~main.f7bf58f2.js",
+    "runtime~main.js.map": "/isolationReact/static/js/runtime~main.f7bf58f2.js.map",
+    "static/css/2.ac1935ff.chunk.css": "/isolationReact/static/css/2.ac1935ff.chunk.css",
+    "static/js/2.016b8168.chunk.js": "/isolationReact/static/js/2.016b8168.chunk.js",
+    "static/js/2.016b8168.chunk.js.map": "/isolationReact/static/js/2.016b8168.chunk.js.map",
+    "index.html": "/isolationReact/index.html",
+    "precache-manifest.176cdf181096082e1f80335e341df585.js": "/isolationReact/precache-manifest.176cdf181096082e1f80335e341df585.js",
+    "service-worker.js": "/isolationReact/service-worker.js",
+    "static/css/2.ac1935ff.chunk.css.map": "/isolationReact/static/css/2.ac1935ff.chunk.css.map",
+    "static/css/main.c9d5a171.chunk.css.map": "/isolationReact/static/css/main.c9d5a171.chunk.css.map",
+    "static/media/semantic.min.css": "/isolationReact/static/media/outline-icons.ef60a4f6.woff"
   }
 }

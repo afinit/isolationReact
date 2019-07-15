@@ -63,7 +63,7 @@ const GameContainer = function(props: GameProps) {
       console.log("minimax: ", name, aiMove);
       console.log("runtime: ", new Date().getTime() - startTime);
 
-      setGame((prevState: Game) => prevState.move(aiMove.pos));
+      setGame((prevState: Game) => prevState.moveScore(aiMove.pos, aiMove.score));
     }
   };
 
@@ -108,6 +108,7 @@ const GameContainer = function(props: GameProps) {
         <div className="game-buttons">
           <Button onClick={lastMoveClick}>Last Move</Button>
           <Button onClick={nextMoveClick}>Next Move</Button>
+          {game.getScore() !== undefined && <p>Assessed Score: {game.getScore()}</p>}
         </div>
       </>
     );

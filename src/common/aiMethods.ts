@@ -26,9 +26,8 @@ export function aiAlgorithm(
       const gameCopy = game.move(move);
       if (useAlphaBeta) {
         // if maxPlayer, then we need to minimize the value of the board for the next move
-        return maxPlayer ?
-          alphaBetaMin(gameCopy, move, endTime, depth-1, heuristic) :
-          alphaBetaMax(gameCopy, move, endTime, depth-1, heuristic);
+        const scoreStuff = alphaBeta(gameCopy, move, endTime, depth-1, heuristic, !maxPlayer);
+        return scoreStuff
       }
       else {
         return minimax(gameCopy, move, !maxPlayer, endTime, depth-1, heuristic)
@@ -68,58 +67,48 @@ export function minimax(
 }
 
 
-function alphaBetaMax(
+function alphaBeta(
   game: Game,
   move: number,
   endTime: number,
   depth: number,
   heuristic: Heuristic,
+  maxPlayer: boolean,
   alpha: number = Number.MIN_SAFE_INTEGER,
   beta: number = Number.MAX_SAFE_INTEGER
 ): ScoreState {
   const legalMoves = game.getLegalMoves();
   if (legalMoves.length === 0) {
-    return {score: -(WINNING_SCORE + depth), pos: move, depth};
+    return {score: (WINNING_SCORE + depth) * (maxPlayer ? -1 : 1), pos: move, depth};
   } else if (depth === 0 || endTime < new Date().getTime()) {
-    return {...heuristic.evaluate(game, move, true), depth};
+    return {...heuristic.evaluate(game, move, maxPlayer), depth};
   } else {
     // default state starts at the move passed
-    const startState = {score: Number.MIN_SAFE_INTEGER, pos: move, alpha, beta};
+    const startScore = maxPlayer ? Number.MIN_SAFE_INTEGER : Number.MAX_SAFE_INTEGER;
+    const startState = {score: startScore, pos: move, alpha, beta};
     const bestMove = legalMoves.reduce( (accState, newMove) => {
-      if (accState.score >= accState.beta) return accState;
+      if (maxPlayer && accState.score >= accState.beta) return accState;
+      else if (!maxPlayer && accState.score <= accState.alpha) return accState;
       else {
         const gameCopy = game.move(newMove);
-        const retVal = alphaBetaMin(gameCopy, newMove, endTime, depth-1, heuristic, accState.alpha, accState.beta);
-        return {...accState, score: retVal.score, pos: newMove, alpha: Math.max(retVal.score, accState.alpha), depth: retVal.depth};
-      }
-    }, startState)
-    return {...bestMove, pos: move}
-  }
-}
+        const retVal = alphaBeta(gameCopy, newMove, endTime, depth-1, heuristic, !maxPlayer, accState.alpha, accState.beta);
 
-function alphaBetaMin(
-  game: Game,
-  move: number,
-  endTime: number,
-  depth: number,
-  heuristic: Heuristic,
-  alpha: number = Number.MIN_SAFE_INTEGER,
-  beta: number = Number.MAX_SAFE_INTEGER
-): ScoreState {
-  const legalMoves = game.getLegalMoves();
-  if (legalMoves.length === 0) {
-    return {score: WINNING_SCORE + depth, pos: move, depth};
-  } else if (depth === 0 || endTime < new Date().getTime()) {
-    return {...heuristic.evaluate(game, move, false), depth};
-  } else {
-    // default state starts at the move passed
-    const startState = {score: Number.MAX_SAFE_INTEGER, pos: move, alpha, beta};
-    const bestMove = legalMoves.reduce( (accState, newMove) => {
-      if (accState.score <= accState.alpha) return accState;
-      else {
-        const gameCopy = game.move(newMove);
-        const retVal = alphaBetaMax(gameCopy, newMove, endTime, depth-1, heuristic, accState.alpha, accState.beta);
-        return {...accState, score: retVal.score, pos: newMove, beta: Math.min(retVal.score, accState.beta), depth: retVal.depth};
+        let score = accState.score;
+        let pos = accState.pos;
+        let alpha = accState.alpha;
+        let beta = accState.beta;
+        if (maxPlayer && retVal.score > score) {
+          score = retVal.score;
+          pos = newMove;
+          alpha = Math.max(retVal.score, alpha)
+        }
+        else if (!maxPlayer && retVal.score < score) {
+          score = retVal.score;
+          pos = newMove;
+          beta = Math.min(retVal.score, beta)
+        }
+
+        return {...accState, score, pos, alpha, beta, depth: retVal.depth};
       }
     }, startState)
     return {...bestMove, pos: move}

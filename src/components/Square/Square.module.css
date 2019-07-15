@@ -1,0 +1,47 @@
+.Square {
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 34px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 34px;
+}
+
+.Square:focus {
+  outline: none;
+}
+
+.SquareEmpty .SquareP1Hover .SquareP2Hover {
+  background: #fff;
+}
+
+.SquarePastMove {
+  background: #FFD6C0;
+}
+
+.SquareP1Hover:hover {
+  background: #FFA5A5;
+}
+
+.SquareP1Token {
+  background: #EC368D;
+}
+
+.SquareP2Hover:hover {
+  background: #51E5FF;
+}
+
+.SquareP2Token {
+  background: #440381;
+}
+/* export const COLOR_P1_HOVER = "#FFA5A5";  // FFA5A5   AAAE5B
+export const COLOR_P1_TOKEN = "#EC368D";  // EC368D   3B5626
+export const COLOR_P2_HOVER = "#51E5FF";  // 51E5FF   E49C39
+export const COLOR_P2_TOKEN = "#440381";  // 440381   FC7C15
+export const COLOR_PASTMOVE = "#FFD6C0";  // FFD6C0   4A3B09
+export const COLOR_EMPTY = "#fff"; */

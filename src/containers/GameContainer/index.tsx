@@ -114,7 +114,7 @@ const GameContainer = function(props: GameProps) {
   }
 
   let status;
-  if (game.getLegalMoves().length !== 0) {
+  if (game.getLegalMoves().length !== 0 || game.reviewMode) {
     status = "Next Move: " + currPlayer.name;
   } else {
     status = "Winner: " + nextPlayer(currPlayer).name;
@@ -143,6 +143,7 @@ const GameContainer = function(props: GameProps) {
         <Board
           squares={game.getBoard()}
           boardSize={boardSize}
+          legalMoves={game.getLegalMoves()}
           onClick={i => handleSquareClick(i)}
         />
       </div>

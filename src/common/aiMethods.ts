@@ -23,7 +23,7 @@ export function aiAlgorithm(
 ): ScoreState {
   const moveScores = game.getLegalMoves().map(
     move => {
-      const gameCopy = game.copy();
+      const gameCopy = game.move(move);
       if (useAlphaBeta) {
         // if maxPlayer, then we need to minimize the value of the board for the next move
         return maxPlayer ?

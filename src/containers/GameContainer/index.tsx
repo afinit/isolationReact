@@ -12,7 +12,8 @@ import { PlayerConfig } from "../../components/PlayerConfigForm";
 import {
   DEFAULT_MINIMAX_DEPTH,
   DEFAULT_HEURISTIC,
-  DEFAULT_ALPHABETA
+  DEFAULT_ALPHABETA,
+  SQUARE_EMPTY
 } from "../../common/constants";
 import { aiAlgorithm } from "../../common/aiMethods";
 import { Game, initializeGame } from "../../common/Game";
@@ -34,7 +35,7 @@ const GameContainer = function(props: GameProps) {
   const [initGame] = useState(initializeGame(
     boardSize,
     [props.p1, props.p2],
-    (Array<string>(boardSize * boardSize) as any).fill(null),
+    Array<number>(boardSize * boardSize).fill(SQUARE_EMPTY),
     Math.random() < 0.5 ? 0 : 1
   ) as Game);
   const [game, setGame] = useState(initGame);

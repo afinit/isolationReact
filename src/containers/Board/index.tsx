@@ -3,7 +3,7 @@ import Square from '../../components/Square';
 
 
 interface BoardProps {
-    squares: Array<string>;
+    squares: number[];
     onClick(i: number): void;
     boardSize: number;
 }

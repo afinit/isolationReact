@@ -10,3 +10,15 @@ export const DEFAULT_HEURISTIC = heuristicOptionDictionary["OpenMoves"].heuristi
 export const DEFAULT_ALPHABETA = false;
 export const PASTMOVECHAR = "#";
 export const CURRENTPOSCHAR = "ø";
+
+export const SQUARE_EMPTY = -2;
+export const SQUARE_PASTMOVE = -1;
+export const SQUARE_P1_TOKEN = 0;
+export const SQUARE_P2_TOKEN = 1;
+
+export const COLOR_P1_HOVER = "#FFA5A5";  // FFA5A5   AAAE5B
+export const COLOR_P1_TOKEN = "#EC368D";  // EC368D   3B5626
+export const COLOR_P2_HOVER = "#51E5FF";  // 51E5FF   E49C39
+export const COLOR_P2_TOKEN = "#440381";  // 440381   FC7C15
+export const COLOR_PASTMOVE = "#FFD6C0";  // FFD6C0   4A3B09
+export const COLOR_EMPTY = "#fff";

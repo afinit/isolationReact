@@ -1,5 +1,5 @@
 import { PlayerConfig } from "../components/PlayerConfigForm";
-import { PASTMOVECHAR, CURRENTPOSCHAR } from "./constants";
+import { SQUARE_PASTMOVE, SQUARE_P1_TOKEN } from "./constants";
 import { calculateLegalMoves } from "./util";
 
 export abstract class Game {
@@ -19,7 +19,7 @@ export abstract class Game {
 
   abstract copy(): Game;
   abstract getPlayer(): PlayerConfig;
-  abstract getBoard(): string[];
+  abstract getBoard(): number[];
   abstract getPosition(): number | undefined;
   abstract getLegalMoves(): number[];
   abstract endReview(): Game;
@@ -36,7 +36,7 @@ export abstract class Game {
 }
 
 interface OnePieceHistory {
-  squares: string[];
+  squares: number[];
   currPlayerIdx: number;
   currPosition: number | undefined;
 }
@@ -104,9 +104,9 @@ export class OnePieceGame extends Game {
     const currentHistory = this.history[this.history.length - 1];
     const squaresCopy = currentHistory.squares.slice()
     if (currentHistory.currPosition !== undefined) {
-      squaresCopy[currentHistory.currPosition] = PASTMOVECHAR;
+      squaresCopy[currentHistory.currPosition] = SQUARE_PASTMOVE;
     }
-    squaresCopy[i] = CURRENTPOSCHAR;
+    squaresCopy[i] = SQUARE_P1_TOKEN;
     const newState = { 
       squares: squaresCopy,
       currPlayerIdx: (currentHistory.currPlayerIdx + 1) % 2,
@@ -124,7 +124,7 @@ export class OnePieceGame extends Game {
   }
 }
   
-export function initializeGame(boardSize: number, players: PlayerConfig[], squares: string[], startingPlayerIdx: number) {
+export function initializeGame(boardSize: number, players: PlayerConfig[], squares: number[], startingPlayerIdx: number) {
   const history = [{
     squares,
     currPlayerIdx: startingPlayerIdx,

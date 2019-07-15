@@ -1,5 +1,6 @@
 import { ScoreState } from "./util";
 import { Game } from "./Game";
+import { SQUARE_EMPTY } from "./constants";
 
 // SUPPORTING METHODS SECTION
 //  NOTE: These heuristics evaluate the state of the board at the beginning of the maxPlayer's turn
@@ -16,14 +17,14 @@ const openMovesHeuristicMethod = (game: Game, pos: number, maxPlayer: boolean) =
   return maxPlayer ? {score: moves, pos} : {score: -moves, pos};
 }
 
-function isLegal(squares: Array<string>, pos: number, row: number, boardSize: number) {
+function isLegal(squares: number[], pos: number, row: number, boardSize: number) {
   // check row of new pos with mod boardSize
   // check if pos is outside of legal pos
   // return and of both
-  return pos >= 0 && pos < boardSize * boardSize && squares[pos] === null && Math.floor(pos / boardSize) === row;
+  return pos >= 0 && pos < boardSize * boardSize && squares[pos] === SQUARE_EMPTY && Math.floor(pos / boardSize) === row;
 }
 
-function addMove(squares: Array<string>, currPos: number, move: number, boardSize: number, queue: Array<number>, flood: Array<number>) {
+function addMove(squares: number[], currPos: number, move: number, boardSize: number, queue: Array<number>, flood: Array<number>) {
   // calc row adjustment for moves that expect a different row from the current
   const rowAdj = move < -1 || move > 1 ? move / Math.abs(move) : 0;
   const newPos = currPos + move;
@@ -34,7 +35,7 @@ function addMove(squares: Array<string>, currPos: number, move: number, boardSiz
   }
 }
 
-function floodfill(squares: Array<string>, pos: number, boardSize: number) {
+function floodfill(squares: number[], pos: number, boardSize: number) {
   let q = [pos];
   let flood = [pos];
   const moves = [ -boardSize-1, -boardSize, -boardSize + 1, 

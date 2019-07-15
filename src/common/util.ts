@@ -1,5 +1,5 @@
 import { range, takeWhile } from 'lodash';
-import { PASTMOVECHAR, CURRENTPOSCHAR } from './constants';
+import { SQUARE_EMPTY } from './constants';
 
 export interface ScoreState {
   score: number;
@@ -13,15 +13,15 @@ function getLineRange(pos: number, rangeStop: number, step: number) {
 
 function filterLineRange(
   lineRange: Array<number>, 
-  squares: Array<string>, 
+  squares: number[], 
   extraFilter = (_: number) => true
 ) {
-  return takeWhile(lineRange, (i) => squares[i] === null && extraFilter(i));
+  return takeWhile(lineRange, (i) => squares[i] === SQUARE_EMPTY && extraFilter(i));
 }
 
-function calculateQueenMoves(squares: Array<string>, pos: number | undefined, boardSize: number) {
+function calculateQueenMoves(squares: number[], pos: number | undefined, boardSize: number) {
   if (pos === undefined) {
-    return range(0, boardSize * boardSize).filter(i => squares[i] !== PASTMOVECHAR && squares[i] !== CURRENTPOSCHAR);
+    return range(0, boardSize * boardSize).filter(i => squares[i] === SQUARE_EMPTY);
   }
   else {
     const maxBoardSize = boardSize * boardSize;

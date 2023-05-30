@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import GameContainer from "./containers/GameContainer";
-import { Switch, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import NewGameForm from "./containers/NewGameForm";
 import { PlayerConfig } from "./components/PlayerConfigForm";
 import { DEFAULT_MINIMAX_DEPTH, DEFAULT_HEURISTIC, DEFAULT_ALPHABETA } from "./common/constants";
@@ -21,16 +21,16 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Switch>
-        <Route path="/game" render={
-          () => <GameContainer
+      <Routes>
+        <Route path="/game" element={
+          <GameContainer
                   boardSize={boardSize}
                   p1={p1} 
                   p2={p2} />
         } />
         <Route
           path="/"
-          render={() => (
+          element={
             <NewGameForm
               p1={p1}
               p2={p2}
@@ -39,9 +39,10 @@ export default function App() {
               setP2={setP2}
               setBoardSize={setBoardSize}
             />
-          )}
+          }
         />
-      </Switch>
+      </Routes>
     </BrowserRouter>
   );
 }
+

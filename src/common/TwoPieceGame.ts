@@ -1,38 +1,46 @@
 import { PlayerConfig } from "../components/PlayerConfigForm";
-import { SQUARE_PASTMOVE, SQUARE_P1_TOKEN } from "./constants";
+import { SQUARE_PASTMOVE, SQUARE_P1_TOKEN, SQUARE_P2_TOKEN } from "./constants";
 import { calculateLegalMoves } from "./util";
 import { Game } from "./Game";
 
-interface OnePieceHistory {
+interface TwoPieceHistory {
   squares: number[];
   currPlayerIdx: number;
-  currPosition: number | undefined;
+  currPosition0: number | undefined;
+  currPosition1: number | undefined;
 }
 
-export class OnePieceGame extends Game {
+function calculateCurrPosition(
+  twoPieceHistory: TwoPieceHistory
+) {
+  if (twoPieceHistory.currPlayerIdx === 0) {
+    return twoPieceHistory.currPosition0;
+  } else {
+    return twoPieceHistory.currPosition1
+  }
+}
+
+export class TwoPieceGame extends Game {
   private historyIdx: number;
-  private history: OnePieceHistory[];
+  private history: TwoPieceHistory[];
   private scoreHistory: number[];
-  private legalMoves: number[];
 
   constructor(
     boardSize: number,
     players: PlayerConfig[],
     reviewMode: boolean,
     historyIdx: number,
-    history: OnePieceHistory[],
-    legalMoves: number[],
+    history: TwoPieceHistory[],
     scoreHistory: number[]
   ) {
     super(boardSize, players, reviewMode);
     this.historyIdx = historyIdx;
     this.history = history;
-    this.legalMoves = legalMoves;
     this.scoreHistory = scoreHistory;
   }
 
   copy() {
-    return new OnePieceGame(
+    return new TwoPieceGame(
       this.boardSize,
       this.players,
       this.reviewMode,
@@ -40,7 +48,6 @@ export class OnePieceGame extends Game {
       this.history.map(h => {
         return { ...h };
       }),
-      this.legalMoves,
       this.scoreHistory
     );
   }
@@ -55,10 +62,14 @@ export class OnePieceGame extends Game {
     return this.scoreHistory[this.historyIdx];
   }
   getPosition() {
-    return this.history[this.history.length - 1].currPosition;
+    const currentHistory = this.history[this.history.length - 1]
+    return calculateCurrPosition(currentHistory);
   }
   getLegalMoves() {
-    return this.legalMoves;
+    const currPosition = this.getPosition();
+    const currentHistory = this.history[this.history.length - 1]
+    const legalMoves = calculateLegalMoves(currentHistory.squares, currPosition, this.boardSize)
+    return legalMoves;
   }
   endReview() {
     const gameCopy = this.copy();
@@ -81,42 +92,51 @@ export class OnePieceGame extends Game {
   }
   restartHere() {
     const gameCopy = this.copy();
-    gameCopy.history = gameCopy.history.slice(0, gameCopy.historyIdx + 1);
+    const newGameHistory = gameCopy.history.slice(0, gameCopy.historyIdx + 1);
+
+    gameCopy.history = newGameHistory;
     gameCopy.reviewMode = false;
-    gameCopy.legalMoves = calculateLegalMoves(
-      gameCopy.getBoard(),
-      gameCopy.history[gameCopy.historyIdx].currPosition,
-      gameCopy.boardSize
-    );
     return gameCopy;
   }
 
   moveScore(i: number, score: number = 0): Game {
     const currentHistory = this.history[this.history.length - 1];
     const squaresCopy = currentHistory.squares.slice();
-    if (currentHistory.currPosition !== undefined) {
-      squaresCopy[currentHistory.currPosition] = SQUARE_PASTMOVE;
+    const currPosition = calculateCurrPosition(currentHistory);
+
+    if (currPosition !== undefined) {
+      squaresCopy[currPosition] = SQUARE_PASTMOVE;
     }
-    squaresCopy[i] = SQUARE_P1_TOKEN;
+
+    const currPlayerIdx = currentHistory.currPlayerIdx;
+    let currPosition0 = currentHistory.currPosition0;
+    let currPosition1 = currentHistory.currPosition1;
+    if (currPlayerIdx === 0) {
+      squaresCopy[i] = SQUARE_P1_TOKEN;
+      currPosition0 = i;
+    } else {
+      squaresCopy[i] = SQUARE_P2_TOKEN;
+      currPosition1 = i;
+    }
     const newState = {
       squares: squaresCopy,
-      currPlayerIdx: (currentHistory.currPlayerIdx + 1) % 2,
-      currPosition: i
+      currPlayerIdx: (currPlayerIdx + 1) % 2,
+      currPosition0: currPosition0,
+      currPosition1: currPosition1
     };
 
-    return new OnePieceGame(
+    return new TwoPieceGame(
       this.boardSize,
       this.players,
       this.reviewMode,
       this.historyIdx + 1,
       [...this.history, newState],
-      calculateLegalMoves(squaresCopy, i, this.boardSize),
       [...this.scoreHistory, score]
     );
   }
 }
 
-export function initializeOnePieceGame(
+export function initializeTwoPieceGame(
   boardSize: number,
   players: PlayerConfig[],
   squares: number[],
@@ -126,18 +146,18 @@ export function initializeOnePieceGame(
     {
       squares,
       currPlayerIdx: startingPlayerIdx,
-      currPosition: undefined
+      currPosition0: undefined,
+      currPosition1: undefined
     }
   ];
   const reviewMode = false;
 
-  return new OnePieceGame(
+  return new TwoPieceGame(
     boardSize,
     players,
     reviewMode,
     0,
     history,
-    calculateLegalMoves(squares, undefined, boardSize),
     []
   );
 }

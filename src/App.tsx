@@ -4,6 +4,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import NewGameForm from "./containers/NewGameForm";
 import { PlayerConfig } from "./components/PlayerConfigForm";
 import { DEFAULT_MINIMAX_DEPTH, DEFAULT_HEURISTIC, DEFAULT_ALPHABETA } from "./common/constants";
+import { PieceCount } from "./common/types";
 
 export default function App() {
   const [p1, setP1] = useState<PlayerConfig>({
@@ -18,6 +19,7 @@ export default function App() {
     alphaBeta: DEFAULT_ALPHABETA
   })
   const [boardSize, setBoardSize] = useState(9);
+  const [pieceCount, setPieceCount] = useState(PieceCount.OnePiece);
 
   return (
     <BrowserRouter>
@@ -26,7 +28,8 @@ export default function App() {
           <GameContainer
                   boardSize={boardSize}
                   p1={p1} 
-                  p2={p2} />
+                  p2={p2}
+                  pieceCount={pieceCount} />
         } />
         <Route
           path="/"
@@ -35,9 +38,11 @@ export default function App() {
               p1={p1}
               p2={p2}
               boardSize={boardSize}
+              pieceCount={pieceCount}
               setP1={setP1}
               setP2={setP2}
               setBoardSize={setBoardSize}
+              setPieceCount={setPieceCount}
             />
           }
         />

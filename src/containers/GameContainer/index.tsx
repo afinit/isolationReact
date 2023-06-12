@@ -12,21 +12,22 @@ import { PlayerConfig } from "../../components/PlayerConfigForm";
 import {
   DEFAULT_MINIMAX_DEPTH,
   DEFAULT_HEURISTIC,
-  DEFAULT_ALPHABETA,
-  SQUARE_EMPTY
+  DEFAULT_ALPHABETA
 } from "../../common/constants";
 import { aiAlgorithm } from "../../common/aiMethods";
-import { Game} from "../../common/Game";
+import { Game } from "../../common/Game";
 
+import { PieceCount } from "../../common/types";
 import { initializeGame } from "../../common/util";
 
 interface GameProps {
   boardSize: number;
   p1: PlayerConfig;
   p2: PlayerConfig;
+  pieceCount: PieceCount;
 }
 
-const GameContainer = function(props: GameProps) {
+const GameContainer = function (props: GameProps) {
   const nextPlayer = (p: PlayerConfig) =>
     p === props.p1 ? props.p2 : props.p1;
 
@@ -34,12 +35,12 @@ const GameContainer = function(props: GameProps) {
   const squarePixels = 34;
   const minGameWidth = 320;
 
-  const [initGame] = useState(initializeGame(
-    boardSize,
-    [props.p1, props.p2],
-    Array<number>(boardSize * boardSize).fill(SQUARE_EMPTY),
-    Math.random() < 0.5 ? 0 : 1
-  ) as Game);
+  const initGame = initializeGame(
+    props.pieceCount,
+    props.boardSize,
+    props.p1,
+    props.p2
+  );
   const [game, setGame] = useState(initGame);
   const currPlayer: PlayerConfig = game.getPlayer();
 
@@ -69,7 +70,7 @@ const GameContainer = function(props: GameProps) {
     }
   };
 
-  const handleSquareClick = function(i: number) {
+  const handleSquareClick = function (i: number) {
     if (currPlayer.actor === "Human" && !game.reviewMode) {
       if (!includes(game.getLegalMoves(), i)) return;
 
@@ -77,20 +78,20 @@ const GameContainer = function(props: GameProps) {
     }
   };
 
-  const startReviewClick = function() {
+  const startReviewClick = function () {
     setGame((prevState: Game) => prevState.copy().startReview());
   };
 
-  const endReviewClick = function() {
+  const endReviewClick = function () {
     setGame((prevState: Game) => prevState.endReview());
   };
-  const lastMoveClick = function() {
+  const lastMoveClick = function () {
     setGame((prevState: Game) => prevState.lastMove());
   };
-  const nextMoveClick = function() {
+  const nextMoveClick = function () {
     setGame((prevState: Game) => prevState.nextMove());
   };
-  const restartHereClick = function() {
+  const restartHereClick = function () {
     setGame((prevState: Game) => prevState.restartHere());
   };
 

@@ -1,7 +1,10 @@
 import { range, takeWhile } from 'lodash';
 import { SQUARE_EMPTY } from './constants';
-import { OnePieceGame } from "./OnePieceGame";
 import { PlayerConfig } from "../components/PlayerConfigForm";
+import { PieceCount } from './types';
+import { Game } from './Game';
+import { initializeOnePieceGame } from './OnePieceGame';
+import { initializeTwoPieceGame } from './TwoPieceGame';
 
 export interface ScoreState {
   score: number;
@@ -56,27 +59,27 @@ export const boundNumber = (num: number, minNum: number, maxNum: number) => {
 }
 
 export function initializeGame(
+  pieceCount: PieceCount,
   boardSize: number,
-  players: PlayerConfig[],
-  squares: number[],
-  startingPlayerIdx: number
-) {
-  const history = [
-    {
-      squares,
-      currPlayerIdx: startingPlayerIdx,
-      currPosition: undefined
-    }
-  ];
-  const reviewMode = false;
+  p1: PlayerConfig,
+  p2: PlayerConfig
+): Game {
+  const startingPlayer = Math.random() < 0.5 ? 0 : 1;
+  const startingBoard = Array<number>(boardSize * boardSize).fill(SQUARE_EMPTY);
 
-  return new OnePieceGame(
-    boardSize,
-    players,
-    reviewMode,
-    0,
-    history,
-    calculateLegalMoves(squares, undefined, boardSize),
-    []
-  );
+  if (pieceCount === PieceCount.OnePiece) {
+    return initializeOnePieceGame(
+      boardSize,
+      [p1, p2],
+      startingBoard,
+      startingPlayer
+    ) as Game
+  } else {
+    return initializeTwoPieceGame(
+      boardSize,
+      [p1, p2],
+      startingBoard,
+      startingPlayer
+    ) as Game
+  };
 }

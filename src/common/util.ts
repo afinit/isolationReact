@@ -1,5 +1,7 @@
 import { range, takeWhile } from 'lodash';
 import { SQUARE_EMPTY } from './constants';
+import { OnePieceGame } from "./OnePieceGame";
+import { PlayerConfig } from "../components/PlayerConfigForm";
 
 export interface ScoreState {
   score: number;
@@ -51,4 +53,30 @@ export const boundNumber = (num: number, minNum: number, maxNum: number) => {
   else if (num > minNum) numAdj = num
   
   return numAdj;
+}
+
+export function initializeGame(
+  boardSize: number,
+  players: PlayerConfig[],
+  squares: number[],
+  startingPlayerIdx: number
+) {
+  const history = [
+    {
+      squares,
+      currPlayerIdx: startingPlayerIdx,
+      currPosition: undefined
+    }
+  ];
+  const reviewMode = false;
+
+  return new OnePieceGame(
+    boardSize,
+    players,
+    reviewMode,
+    0,
+    history,
+    calculateLegalMoves(squares, undefined, boardSize),
+    []
+  );
 }

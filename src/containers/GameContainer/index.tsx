@@ -16,7 +16,9 @@ import {
   SQUARE_EMPTY
 } from "../../common/constants";
 import { aiAlgorithm } from "../../common/aiMethods";
-import { Game, initializeGame } from "../../common/Game";
+import { Game} from "../../common/Game";
+
+import { initializeGame } from "../../common/util";
 
 interface GameProps {
   boardSize: number;

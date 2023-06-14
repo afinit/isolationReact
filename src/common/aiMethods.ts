@@ -100,14 +100,20 @@ function alphaBeta(
         if (maxPlayer && retVal.score > score) {
           score = retVal.score;
           pos = newMove;
-          alpha = Math.max(retVal.score, alpha)
         }
         else if (!maxPlayer && retVal.score < score) {
           score = retVal.score;
           pos = newMove;
-          beta = Math.min(retVal.score, beta)
         }
 
+        if (maxPlayer) {
+          alpha = Math.max(score, alpha);
+        } else {
+          beta = Math.min(score, beta);
+        }
+
+        // we always start with !maxPlayer in aiAlgorithm, so alpha will never get passed up to the parent.
+        // beta gets passed up from this layer, but not from the children
         return {...accState, score, pos, alpha, beta, depth: retVal.depth};
       }
     }, startState)
